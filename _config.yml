@@ -16,7 +16,7 @@ lang: ko
 prefer_datetime_locale:
 
 # Change to your timezone › http://www.timezoneconverter.com/cgi-bin/findzone/findzone
-timezone: Asia/Shanghai
+timezone: Asia/Seoul
 
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
@@ -26,7 +26,7 @@ title: Storage                          # the main title
 tagline: dev log ʕ◍·̀Ⱉ·́◍ʔ    # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
-  A minimal, responsive, and powerful Jekyll theme for presenting professional writing.
+  이사중입니다!
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: 'https://pumfit.github.io'
@@ -83,7 +83,7 @@ theme_mode:   # [light|dark]
 img_cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar: 'https://drive.google.com/file/d/1KLoReFGlORo7wVijWCw4iGZdfZOvm0KL/view?usp=sharing'
+avatar: 'assets/img/avatar/avatar.jpg'
 
 # boolean type, the global switch for ToC in posts.
 toc: true
