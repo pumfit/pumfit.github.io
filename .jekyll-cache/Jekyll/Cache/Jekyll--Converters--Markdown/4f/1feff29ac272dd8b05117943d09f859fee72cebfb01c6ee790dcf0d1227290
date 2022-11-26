@@ -1,0 +1,76 @@
+I"�<h1 id="gitblog-테스트">GitBlog 테스트</h1>
+<p>깃 블로그 생성 테스트 및 진행내용 정리용 포스트</p>
+<h2 id="todolist">TODOLIST</h2>
+<ul class="task-list">
+  <li class="task-list-item">
+    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />프로필 이미지 변경하기</p>
+  </li>
+  <li class="task-list-item">
+    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />카테고리  추가하기</p>
+  </li>
+  <li class="task-list-item">
+    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />태그 추가하기</p>
+  </li>
+  <li class="task-list-item">
+    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />댓글기능 추가하기</p>
+  </li>
+  <li class="task-list-item">
+    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ABOUT 추가하기</p>
+  </li>
+  <li class="task-list-item">
+    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />구글 애널리틱스 계정 및 추가하기</p>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="로컬에서-테스트하기">로컬에서 테스트하기</h2>
+
+<p>터미널에서 아래 명령어로 로컬에 띄운 후 변경사항이 잡히면 Regenerating되며 문법상 에러가 발생하면 에러로그가 나타난다.</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td> --><td class="rouge-code"><pre>jekyll serve
+</pre></td></tr></tbody></table></code></pre></div></div>
+<hr />
+
+<h2 id="카테고리-및-태그-추가하기">카테고리 및 태그 추가하기</h2>
+
+<p>게시글 상단에 아래 양식에 맞게 작성하면 자동으로 카테고리와 태그가 생성된다.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td> --><td class="rouge-code"><pre><span class="nn">---</span>
+<span class="na">title</span><span class="pi">:</span> <span class="s">TITLE</span>
+<span class="na">date</span><span class="pi">:</span> <span class="s">2022-09-12</span>
+<span class="na">categories</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">TOP_CATEGORIE</span><span class="pi">,</span> <span class="nv">SUB_CATEGORIE</span><span class="pi">]</span>
+<span class="na">tags</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">TAG</span><span class="pi">]</span>    
+<span class="nn">---</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h3 id="포스트-관련-정리글">포스트 관련 정리글</h3>
+
+<ul>
+  <li>https://jekyllrb.com/docs/posts/</li>
+  <li>https://chirpy.cotes.page/posts/write-a-new-post/</li>
+</ul>
+
+<h3 id="포스트가-올라가지-않는-문제점">포스트가 올라가지 않는 문제점</h3>
+
+<p>게시글을 작성하면 로컬에서는 확인이 되는데 push 이후 github.io에서는 보이지 않는 문제점이 있었다.</p>
+
+<ul>
+  <li>https://stackoverflow.com/questions/30625044/jekyll-post-not-generated?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa</li>
+</ul>
+
+<p>You can use <code class="language-plaintext highlighter-rouge">jekyll build --verbose</code> to view build process in detail.</p>
+
+<p>위 명령어로 확인해봐도 정상적으로 발췌된 것으로 나왔다.</p>
+
+<h3 id="마크다운-온라인-에디터">마크다운 온라인 에디터</h3>
+
+<ul>
+  <li>https://stackedit.io/</li>
+</ul>
+:ET

@@ -1,0 +1,460 @@
+I"�Y<h1 id="-관찰자-패턴-observer"><strong>👀 관찰자</strong> <strong>패턴 (Observer)</strong></h1>
+
+<blockquote>
+  <p>객체 사이에 일 대다의 의존 관계를 정의해두어, 어떤 객체의 상태가 변할 때 그 객체에 의존성을 가진 다른 객체들이 그 변화를 통지 받고 자동으로 업데이트될 수 있게 만듭니다.(GoF의 디자인 패턴 382p)</p>
+</blockquote>
+
+<p>주로 사용되는 MVC구조의 기반이 이 관찰자 패턴이다.</p>
+
+<p>C#에서는 관찰자 패턴을 Event로 제공한다.</p>
+
+<ul>
+  <li>
+    <p><strong>Observer Class 예시</strong></p>
+
+    <p>옵저버 클래스는 인터페이스로 구현된다.
+이 인터페이스를 구현만 하면 어떤 클래스든 관찰자가 될 수 있다.</p>
+
+    <div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">Observer</span>
+<span class="p">{</span>
+<span class="nl">public:</span> <span class="k">virtual</span> <span class="o">~</span><span class="n">Observae</span><span class="p">()</span> <span class="p">{}</span>
+<span class="c1">// onNotifity은 대부분 알림을 보내는 객체와 데이터를 매겨변수로 가진다.</span>
+<span class="c1">// 해당 예제의 Event의 경우 Enum 값을 사용한다.</span>
+<span class="k">virtual</span> <span class="kt">void</span> <span class="n">onNotifity</span><span class="p">(</span><span class="k">const</span> <span class="n">Entity</span><span class="o">&amp;</span> <span class="n">entity</span><span class="p">,</span> <span class="n">Event</span> <span class="n">event</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>업적 클래스는 어떤 이벤트를 받고 업적 달성을 처리하므로 위 옵저버 인터페이스를 구현하여 각 이벤트마다 처리를 진행한다.</p>
+
+    <div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">Achievements</span> <span class="o">:</span> <span class="n">pubic</span> <span class="n">Observer</span><span class="p">{</span>
+<span class="k">public</span> <span class="o">:</span> 
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">onNotify</span><span class="p">(</span><span class="k">const</span> <span class="n">Entity</span><span class="o">&amp;</span> <span class="n">entity</span><span class="p">,</span> <span class="n">Event</span> <span class="n">event</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">switch</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">case</span> <span class="n">EVENT_ENTITY_FELL</span><span class="p">:</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">entity</span><span class="p">.</span><span class="n">isHero</span><span class="p">()</span><span class="o">&amp;&amp;</span><span class="n">heroIsOnBridge_</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="n">unlock</span><span class="p">(</span><span class="n">EVENT_ENTITY_FELL</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">break</span><span class="p">;</span>
+                <span class="c1">//...</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="nl">private:</span>
+    <span class="kt">void</span> <span class="n">unlock</span><span class="p">(</span><span class="n">Achievement</span> <span class="n">achievement</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// 업적을 해제한다.</span>
+    <span class="p">}</span>
+    <span class="kt">bool</span> <span class="n">heroIsOnBridge_</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>알림 매서드는 관찰 당하는 객체가 호출하며 알람을 기다리는 관찰자 목록을 들고 있는다.
+이때, 관찰자 목록을 밖에서 변경할 수 있도록 API를 public으로 열어 둔다. 따라서 누가 알림을 받을 것인지 제어가 가능하다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+</pre></td><td class="rouge-code"><pre>
+<span class="c1">//관찰 당하는 대상 클래스 관찰자를 배열로 들고 있는다.</span>
+<span class="k">class</span> <span class="nc">Subject</span> <span class="p">{</span> 
+
+<span class="nl">private:</span>
+
+  <span class="n">Observer</span><span class="o">*</span> <span class="n">observers_</span><span class="p">[</span><span class="n">MAX_OBSERVERS</span><span class="p">];</span> 
+
+  <span class="kt">int</span> <span class="n">numObservers_</span><span class="p">;</span>
+  
+  <span class="nl">public:</span>
+
+  <span class="kt">void</span> <span class="n">addObserver</span><span class="p">(</span><span class="n">Observer</span><span class="o">*</span> <span class="n">observer</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// 배열에 추가한다...</span>
+
+  <span class="p">}</span>
+
+  <span class="kt">void</span> <span class="n">removeObserver</span><span class="p">(</span><span class="n">Observer</span><span class="o">*</span> <span class="n">observer</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// 배열에서 제거한다...</span>
+
+  <span class="p">}</span>
+
+  <span class="c1">// 그 외...</span>
+
+<span class="p">};</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<blockquote>
+  <p>관찰자 시스템과 이벤트 시스템의 차이점 ‘관찰자’ 시스템과 ‘이벤트’ 시스템의 차이다. 관찰자 시스템에서는 뭔가 관심 있는 일을 하는 객체를 관찰하지만, 이벤트 시스템에서는 관심 있는 일 자체를 나타내는 객체를 관찰한다.</p>
+</blockquote>
+
+<p><img src="/assets/img/post/programmingPattern/reference.png" alt="img-graphicspipeline" /></p>
+
+<h2 id="-왜사용되는가">🕑 <strong>왜사용되는가?</strong></h2>
+
+<ol>
+  <li>
+    <p>대상은 관찰자와 상호작용하지만, 서로 커플링 되어 있지 않다.</p>
+  </li>
+  <li>
+    <p>대상의 관찰자들을 목록으로 관리해서 관찰자들끼리 서로 커플링이 되지 않는다.</p>
+  </li>
+  <li>
+    <p>관찰자를 여러개 등록할 수 있어 각자 독립적으로 다뤄지는 것을 보장할 수 있다.</p>
+  </li>
+</ol>
+
+<h2 id="관찰자-패턴-사용시-문제가-될-수-있는-점들과-해결방안">🤔관찰자 패턴 사용시 문제가 될 수 있는 점들과 해결방안</h2>
+
+<ul>
+  <li>
+    <p>관찰자 패턴은 느리다?
+일부는 알람마다 동적할당과 큐잉이 있어 실제로 느릴 수도 있다.<br />
+하지만 예제의 경우, 인터페이스를 통해 동기적으로 메서드를 간접호출할 뿐 메시징 용 객체를 할당하지 않고 큐잉도 하지 않는다</p>
+  </li>
+  <li>
+    <p>관찰자 패턴은 동기적이다.
+대상이 관찰자 메서드를 직접 호출하기 때문에 <strong>모든 관찰자가 알림 메서드를 반환하기 전에는 다음 작업을 진행할 수 없다.</strong>
+관찰자 중 하나라도 느리면 대상이 블록될수도 있다.</p>
+  </li>
+</ul>
+
+<p>따라서 오래걸리는 작업이 있다면 메인 스레드가 아닌 다른 스레드에 작업을 넘기거나 작업 큐를 활용하는 것이 좋다.</p>
+
+<p>관찰자가 멀티스레드와 락과 함께 사용된다면 교착상태를 주의해야한다.</p>
+
+<ul>
+  <li>관찰자 등록 및 헤제시의 동적할당</li>
+</ul>
+
+<p>대상이 들고 있는 관찰자의 포인터 리스트를 연결리스트로 변경하면 동적할당 문제를 해결할 수 있다.</p>
+
+<p><img src="/assets/img/post/programmingPattern/linkedlist.png" alt="img-graphicspipeline" /></p>
+
+<p>대상 클래스에 관찰자 배열 대신 관찰자 연결 리스트의 첫째 노드를 가리키는 포인터로 설정한다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre>
+<span class="k">class</span> <span class="nc">Subject</span> <span class="p">{</span>
+
+  <span class="n">Subject</span><span class="p">()</span> <span class="o">:</span> <span class="n">head_</span><span class="p">(</span><span class="nb">NULL</span><span class="p">)</span> <span class="p">{}</span>
+
+<span class="nl">private:</span>
+
+  <span class="n">Observer</span><span class="o">*</span> <span class="n">head_</span><span class="p">;</span>
+
+<span class="p">};</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>관찰자에는 연결 리스트의 다음 관찰자를 가리키는 포인터를 추가한다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="rouge-code"><pre>
+<span class="k">class</span> <span class="nc">Observer</span> <span class="p">{</span>
+
+  <span class="k">friend</span> <span class="k">class</span> <span class="nc">Subject</span><span class="p">;</span>
+
+<span class="nl">public:</span>
+
+  <span class="n">Observer</span><span class="p">()</span> <span class="o">:</span> <span class="n">next_</span><span class="p">(</span><span class="nb">NULL</span><span class="p">)</span> <span class="p">{}</span>
+
+
+<span class="nl">private:</span>
+
+  <span class="n">Observer</span><span class="o">*</span> <span class="n">next_</span><span class="p">;</span>
+
+<span class="p">};</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>새로운 관찰자를 연결 리스트에 추가하기만 하면 대상에 등록할 수 있다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre>
+<span class="kt">void</span> <span class="n">Subject</span><span class="o">::</span><span class="n">addObserver</span><span class="p">(</span><span class="n">Observer</span><span class="o">*</span> <span class="n">observer</span><span class="p">)</span> <span class="p">{</span> 
+
+  <span class="n">observer</span><span class="o">-&gt;</span><span class="n">next_</span> <span class="o">=</span> <span class="n">head_</span><span class="p">;</span>
+
+  <span class="n">head_</span> <span class="o">=</span> <span class="n">observer</span><span class="p">;</span> <span class="c1">// 앞쪽에 추가하는 방식</span>
+
+<span class="p">}</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>관찰자를 앞에서부터 추가하면 구현이 간단하지만, 전체 관찰자에 알림을 보낼 때는 맨 나중에 추가된 관찰자부터 맨 먼저 알림을 받는다는 부작용이 있다. 관찰자를 A, B, C 순서대로 추가했다면, C, B, A 순서대로 알림을 받게 된다.</p>
+
+<p>원칙적으로 같은 대상을 관찰하는 관찰자끼리는 알림 순서로 인한 의존 관계가 없게 만들어야 한다. 
+하지만 순서 때문에 문제가 있다면 관찰자들 사이에 <strong>미묘한 커플링</strong> 이 있다는 얘기이므로, 나중에 문제가 될 소지가 크다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+</pre></td><td class="rouge-code"><pre>
+<span class="kt">void</span> <span class="n">Subject</span><span class="o">::</span><span class="n">removeObserver</span><span class="p">(</span><span class="n">Observer</span><span class="o">*</span> <span class="n">observer</span><span class="p">)</span> <span class="p">{</span> 
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">head_</span> <span class="o">==</span> <span class="n">observer</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 첫번째 노드삭제시의 예외처리, 포인터의 포인터를 사용하면 필요없음</span>
+
+    <span class="n">head_</span> <span class="o">=</span> <span class="n">observer</span><span class="o">-&gt;</span><span class="n">next_</span><span class="p">;</span> 
+
+    <span class="n">observer</span><span class="o">-&gt;</span><span class="n">next_</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> 
+
+    <span class="k">return</span><span class="p">;</span>
+
+  <span class="p">}</span>
+
+
+  <span class="n">Observer</span><span class="o">*</span> <span class="n">current</span> <span class="o">=</span> <span class="n">head_</span><span class="p">;</span> 
+
+  <span class="k">while</span> <span class="p">(</span><span class="n">current</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//  단순 연결 리스트라서 노드를 제거하려면 연결 리스트를 순회해야 하지만 이중 연결 리스트라면 N(1)로 가능하다.</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">current</span><span class="o">-&gt;</span><span class="n">next_</span> <span class="o">==</span> <span class="n">observer</span><span class="p">)</span> <span class="p">{</span> 
+
+      <span class="n">current</span><span class="o">-&gt;</span><span class="n">next_</span> <span class="o">=</span> <span class="n">observer</span><span class="o">-&gt;</span><span class="n">next_</span><span class="p">;</span> 
+
+      <span class="n">observer</span><span class="o">-&gt;</span><span class="n">next_</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+      <span class="k">return</span><span class="p">;</span>
+
+    <span class="p">}</span>
+
+    <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">next_</span><span class="p">;</span>
+
+  <span class="p">}</span>
+
+<span class="p">}</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>아래는 예외처리없이 포인터의 포인터를 사용하는 c++ 예제이다.</p>
+
+<p><a href="https://gist.github.com/parkpd/4638874487a358e27957971394d42e90">ch4. pointer of pointer.cpp</a></p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre>
+<span class="c1">//포인터의 포인터를 사용하여 관찰자를 제거하는 방식</span>
+<span class="kt">void</span> <span class="n">Subject</span><span class="o">::</span><span class="n">removeObserver</span><span class="p">(</span><span class="n">Observer</span><span class="o">*</span> <span class="n">observer</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">Observer</span><span class="o">**</span> <span class="n">current</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">head_</span><span class="p">;</span> <span class="c1">// 현재 헤드 주소값</span>
+  <span class="k">while</span> <span class="p">(</span><span class="o">*</span><span class="n">current</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">current</span> <span class="o">==</span> <span class="n">observer</span><span class="p">)</span> <span class="p">{</span><span class="c1">//제거할 관찰자를 찾았다면</span>
+      <span class="o">*</span><span class="n">current</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">current</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">next_</span><span class="p">;</span>
+      <span class="n">observer</span><span class="o">-&gt;</span><span class="n">next_</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="o">&amp;</span><span class="p">(</span><span class="o">*</span><span class="n">current</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">next_</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">})</span> 
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>알람은 모든 노드를 순회하며 알람을 보내면 된다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="rouge-code"><pre>
+<span class="kt">void</span> <span class="n">Subject</span><span class="o">::</span><span class="n">notify</span><span class="p">(</span><span class="k">const</span> <span class="n">Entity</span><span class="o">&amp;</span> <span class="n">entity</span><span class="p">,</span> <span class="n">Event</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span> 
+
+  <span class="n">Observer</span><span class="o">*</span> <span class="n">observer</span> <span class="o">=</span> <span class="n">head_</span><span class="p">;</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="n">observer</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="n">observer</span><span class="o">-&gt;</span><span class="n">onNotify</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">event</span><span class="p">);</span> 
+
+    <span class="n">observer</span> <span class="o">=</span> <span class="n">observer</span><span class="o">-&gt;</span><span class="n">next_</span><span class="p">;</span>
+
+  <span class="p">}</span>
+
+<span class="p">}</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>위와 같이 동적 메모리 할당없이 구현할 수 있으나 <strong>관찰자 객체가 그 자체를 리스트 노드로 활용하기 때문에, 관찰자는 하나의 대상 관찰자 목록에만 등록할 수 있다.</strong> 는 단점이 존재한다.</p>
+
+<p><img src="/assets/img/post/programmingPattern/listnodepool.png" alt="img-graphicspipeline" /></p>
+
+<p>노드가 데이터를 들고 있는 방식</p>
+
+<p>대상이 관찰자 연결 리스트를 들고 있다. 다만, <strong>이 연결 리스트의 노드는 관찰자 객체가 아니다.</strong> 대신 따로 간단한 ‘노드’를 만들어, 관찰자와 다음 노드를 포인터로 가리키게 한다.
+이와 같이 구현하면 같은 관찰자를 여러 노드에서 가리킬 수 있다. 같은 관찰자를 여러 노드에서 가리킬 수 있다는 것은, 같은 관찰자를 동시에 여러 대상에 추가할 수 있다는 뜻이다. 다시 여러 대상을 한 번에 관찰할 수 있게 된 것이다.</p>
+
+<h2 id="-추가적인-문제점">🧐 추가적인 문제점</h2>
+
+<p>대상과 관찰자의 제거</p>
+
+<blockquote>
+  <p>관찰자는 제거하기가 더 어렵다. 대상이 관찰자를 포인터로 알고 있기 때문이다. 해결 방법이 몇 가지 있다. 가장 쉬운 방법은 관찰자가 삭제될 때 스스로를 등록 취소하는 것이다. 관찰자는 보통 관찰 중인 대상을 알고 있으므로 소멸자에서 대상의 removeObserver( )만 호출하면 된다. (흔히 그렇듯이, 뭔가를 하는 건 어렵지 않다. 할 일을 기억하기가 어렵다.)</p>
+</blockquote>
+
+<p>C# 에서 아이템 관련해서 구현을 진행했을 때 비슷한 이슈가 있었었다. 관찰자인 아이템은 몇초 뒤 자동으로 사라지는데 없어진 이벤트를 발생시키면서 NullReferenceException이 발생했다.</p>
+
+<p>Invoke 시 ? 로 Null 체크를 하는 것도 좋지만 등록을 해제하는 것도 잊지 않고 구현해두어야 한다.</p>
+
+<ul>
+  <li>관찰자 제거 시 자동 제거 방식</li>
+</ul>
+
+<p>실수를 막는 더 안전한 방법은 관찰자가 제거될 때 자동으로 모든 대상으로부터 등록 취소하게 만드는 것이다. 
+상위 관찰자 클래스에 등록 취소 코드를 구현해놓으면 이를 상속받는 모든 클래스는 등록 취소에 대해 더 이상 고민하지 않아도 된다. 
+다만 두 방법 모두 관찰자가 자기가 관찰 중인 대상들의 목록을 관리해야 하기 때문에 상호참조가 생겨 복잡성이 늘어나는 단점이 있다.</p>
+
+<h3 id="-사라진-리스너-문제-lapsed-listener-problem">🧐 사라진 리스너 문제 (lapsed listener problem)</h3>
+
+<blockquote>
+  <p>The lapsed listener problem is a common source of memory leaks for object-oriented programming languages, among the most common ones for garbage collected languages.</p>
+</blockquote>
+
+<p><a href="https://en.wikipedia.org/wiki/Lapsed_listener_problem">사라진 리스너</a></p>
+
+<p>인스턴스가 GC로 수거되지 않는 경우 재 실행된다면 반복해서 이벤트가 등록될 수 있고 이 모든 이벤트에 대해 알람을 보내게된다.</p>
+
+<p>즉, 대상이 리스너 레퍼런스를 유지하기 때문에, 메모리에 남아 있는 좀비 객체가 생길 수 있으므로 등록 취소를 주의해야 한다.</p>
+
+<h2 id="-other--reference">📌 Other &amp; Reference</h2>
+
+<p><a href="https://www.hanbit.co.kr/media/channel/view.html?cms_code=CMS8875283492">디자인 패턴 다시 보기: 관찰자 패턴</a></p>
+:ET

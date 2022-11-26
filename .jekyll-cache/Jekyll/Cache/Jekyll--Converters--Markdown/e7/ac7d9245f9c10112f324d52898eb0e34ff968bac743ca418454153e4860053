@@ -1,0 +1,223 @@
+I"{0<p>유니티 코루틴를 사용하며 여러개의 코루틴을 사용하기 위해 List&lt; IEnumerator&gt; 로 루틴을 호출하며 사용했는데 한번 코루틴이 진행되면 Current가 계속 WaitForSeconds에 남아 이후 코루틴을 재실행할 수 없는 일이 발생하였다.
+MoveNext(), Reset()등을 사용해보고자 했으나 Reset은 접근이 되지않았고 MoveNext()를 진행해도 변화가 없어서 먼저 코루틴의 내부 구조와 IEnumerator 및 IEnumerable 에 대해 자세히 알아보고자한다.</p>
+
+<h2 id="--ienumerator-인터페이스">📖  IEnumerator 인터페이스</h2>
+
+<p>제네릭이 아닌 컬렉션을 단순하게 반복할 수 있도록 지원하며 제네릭이 아닌 <strong>모든 열거자의 기본 인터페이스</strong>이다.</p>
+
+<p>System.Collections.Generic.Stack<T>.Enumerator,System.Collections.Generic.List<T>.Enumerator 등 제너릭이 해당 인터페이스를 상속받는 것을 확인할 수 있다.</T></T></p>
+
+<h2 id="--ienumerable-인터페이스">📖  IEnumerable 인터페이스</h2>
+
+<p>제네릭이 아닌 컬렉션에서 단순하게 반복할 수 있도록 지원하는 열거자를 노출하기 위한 인터페이스이다.</p>
+
+<p>따라서 어떤 클래스를 컬렉션들과 같이 반복가능하게 만들고 싶다면 해당 클래스에대한 IEnumerator,IEnumerable를 상속받는 클래스들을 만들어 주면 된다.</p>
+
+<h2 id="-예제">👩‍💻 예제</h2>
+
+<ol>
+  <li>일반적인 클래스</li>
+</ol>
+
+<div class="language-c# highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td> --><td class="rouge-code"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span> 
+<span class="k">using</span> <span class="nn">System.Collections</span><span class="p">;</span> 
+ 
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span> <span class="p">{</span> 
+<span class="k">public</span> <span class="nf">Person</span><span class="p">(</span><span class="kt">string</span> <span class="n">fName</span><span class="p">,</span> <span class="kt">string</span> <span class="n">lName</span><span class="p">)</span> 
+<span class="p">{</span> 
+	<span class="k">this</span><span class="p">.</span><span class="n">firstName</span> <span class="p">=</span> <span class="n">fName</span><span class="p">;</span> 
+	<span class="k">this</span><span class="p">.</span><span class="n">lastName</span> <span class="p">=</span> <span class="n">lName</span><span class="p">;</span> 
+<span class="p">}</span> 
+	<span class="k">public</span>  <span class="kt">string</span> <span class="n">firstName</span><span class="p">;</span> 
+	<span class="k">public</span>  <span class="kt">string</span> <span class="n">lastName</span><span class="p">;</span> 
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<ol>
+  <li>일반 클래스의 컬렉션 클래스</li>
+</ol>
+
+<div class="language-c# highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td> --><td class="rouge-code"><pre><span class="c1">// 사람 객체에 대한 (Collection)집합</span>
+<span class="c1">//IEnumerable 를 상속받아서 ForEach을 사용할 수 있음</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">People</span> <span class="p">:</span> <span class="n">IEnumerable</span> 
+<span class="p">{</span> 
+	 <span class="k">private</span> <span class="n">Person</span><span class="p">[]</span> <span class="n">_people</span><span class="p">;</span>
+	 <span class="k">public</span> <span class="nf">People</span><span class="p">(</span><span class="n">Person</span><span class="p">[]</span> <span class="n">pArray</span><span class="p">)</span> 
+	 <span class="p">{</span> 
+		 <span class="n">_people</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Person</span><span class="p">[</span><span class="n">pArray</span><span class="p">.</span><span class="n">Length</span><span class="p">];</span> 
+		 <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">pArray</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span> 
+	  		<span class="n">_people</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">=</span> <span class="n">pArray</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> 
+	 <span class="p">}</span> 
+	<span class="c1">// IEnumerator를 위한 GetEnumerator 구현</span>
+	<span class="n">IEnumerator</span> <span class="n">IEnumerable</span><span class="p">.</span><span class="nf">GetEnumerator</span><span class="p">()</span> 
+		<span class="p">{</span> <span class="k">return</span> <span class="p">(</span><span class="n">IEnumerator</span><span class="p">)</span> <span class="nf">GetEnumerator</span><span class="p">();</span> <span class="p">}</span>
+	<span class="c1">// PeopleEnum은 People클래스에 대한 IEnumerator 클래스이다.</span>
+	<span class="k">public</span> <span class="n">PeopleEnum</span> <span class="nf">GetEnumerator</span><span class="p">()</span> 
+		<span class="p">{</span> <span class="k">return</span>  <span class="k">new</span> <span class="nf">PeopleEnum</span><span class="p">(</span><span class="n">_people</span><span class="p">);</span> <span class="p">}</span>
+ <span class="p">}</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+<ol>
+  <li>일반 클래스의 컬렉션을 사용하기 위한 IEnumerator 클래스</li>
+</ol>
+
+<div class="language-c# highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+</pre></td> --><td class="rouge-code"><pre><span class="c1">//   IEnumerable을 구현할 때 IEnumerator도 같이 구현해야 쓸 수 있다.</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">PeopleEnum</span> <span class="p">:</span> <span class="n">IEnumerator</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="n">Person</span><span class="p">[]</span> <span class="n">_people</span><span class="p">;</span>
+
+    <span class="c1">// MoveNext()가 처음 호출되기 전까지 열거자(Enumerators)는 첫 번째 요소 앞에 배치된다.</span>
+    <span class="kt">int</span> <span class="n">position</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">PeopleEnum</span><span class="p">(</span><span class="n">Person</span><span class="p">[]</span> <span class="n">list</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_people</span> <span class="p">=</span> <span class="n">list</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">bool</span> <span class="nf">MoveNext</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">position</span><span class="p">++;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">position</span> <span class="p">&lt;</span> <span class="n">_people</span><span class="p">.</span><span class="n">Length</span><span class="p">);</span>
+    <span class="p">}</span>
+	<span class="c1">// Reset은 다시 위치를 -1로 변경함</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Reset</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">position</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">object</span> <span class="n">IEnumerator</span><span class="p">.</span><span class="n">Current</span>
+    <span class="p">{</span>
+        <span class="k">get</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="n">Current</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">Person</span> <span class="n">Current</span>
+    <span class="p">{</span>
+        <span class="k">get</span>
+        <span class="p">{</span>
+            <span class="k">try</span>
+            <span class="p">{</span>
+                <span class="k">return</span> <span class="n">_people</span><span class="p">[</span><span class="n">position</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">IndexOutOfRangeException</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">InvalidOperationException</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<ol>
+  <li>forEach구문 사용</li>
+</ol>
+
+<div class="language-c# highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td> --><td class="rouge-code"><pre>    <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Person</span><span class="p">[]</span> <span class="n">peopleArray</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Person</span><span class="p">[</span><span class="m">3</span><span class="p">]</span>
+        <span class="p">{</span>
+            <span class="k">new</span> <span class="nf">Person</span><span class="p">(</span><span class="s">"John"</span><span class="p">,</span> <span class="s">"Smith"</span><span class="p">),</span>
+            <span class="k">new</span> <span class="nf">Person</span><span class="p">(</span><span class="s">"Jim"</span><span class="p">,</span> <span class="s">"Johnson"</span><span class="p">),</span>
+            <span class="k">new</span> <span class="nf">Person</span><span class="p">(</span><span class="s">"Sue"</span><span class="p">,</span> <span class="s">"Rabon"</span><span class="p">),</span>
+        <span class="p">};</span>
+	<span class="c1">//IEnumerable 컬렉션 집합인 People에서 foreach 구문이 사용 가능해진다. MoveNext() 를 호출하여 처음부터 배열의 끝까지 순회한다.</span>
+        <span class="n">People</span> <span class="n">peopleList</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">People</span><span class="p">(</span><span class="n">peopleArray</span><span class="p">);</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="n">Person</span> <span class="n">p</span> <span class="k">in</span> <span class="n">peopleList</span><span class="p">)</span>
+            <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">firstName</span> <span class="p">+</span> <span class="s">" "</span> <span class="p">+</span> <span class="n">p</span><span class="p">.</span><span class="n">lastName</span><span class="p">);</span>
+    <span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h2 id="-reference">🔗 Reference</h2>
+
+<p><a href="https://learn.microsoft.com/ko-kr/dotnet/api/system.collections.ienumerator?view=net-6.0">IEnumerator 인터페이스</a></p>
+:ET

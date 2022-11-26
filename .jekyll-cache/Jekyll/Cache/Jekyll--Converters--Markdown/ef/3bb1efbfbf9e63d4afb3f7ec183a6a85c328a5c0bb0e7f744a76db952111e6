@@ -1,0 +1,187 @@
+I"S#<h1 id="-바이트-코드-bytecode"><strong>👀 바이트 코드 (Bytecode)</strong></h1>
+
+<p>가상 머신 명령어를 인코딩한 데이터로 행동을 표현할 수 있는 유연성을 제공한다.</p>
+
+<blockquote>
+  <p>인코딩 
+사용자가 입력한 문자나 기호들을 컴퓨터가 이용할 수 있는 신호 코드로 만드는 것을 말한다.</p>
+</blockquote>
+
+<h2 id="데이터--코드">📄데이터 &gt; 코드</h2>
+
+<p>데이터를 수정하여 기능을 구현하면 코드와 데이터를 분리할 수 있다.</p>
+
+<p>행동을 데이터 파일에 따로 정의해두고 게임 코드에서 읽어서 실행할 수 있다면 핵심 게임 코드와 데이터를 안전하게 격리하며 여러 기능을 구현할 수 있다.</p>
+
+<h3 id="인터프리터-패턴">🧩인터프리터 패턴</h3>
+<p>실행하고 싶은 프로그래밍언어가 아래와 같은 수식을 지원한다고 하자
+<code class="language-plaintext highlighter-rouge">(1+2) * (3-4)</code>
+이런 표현식은 객체로 변환된다. 숫자 리터럴은 아래처럼 변환된다.</p>
+
+<p><img src="/assets/img/post/programmingPattern/bytecodeNumbers.png" alt="img-bytecodeNumbers" /></p>
+
+<p>숫자 상수는 단순히 숫자 값을 래핑한 객체이다. 연산자도 객체로 바뀌는데 이때 피연산자도 같이 참조한다.</p>
+
+<p>표현식은 객체 트리로 바뀌게 된다.</p>
+
+<p><img src="/assets/img/post/programmingPattern/bytecodeAst.png" alt="img-bytecodeNumbers" /></p>
+
+<p>인터프리터 패턴의 목표는 이런 추상 구문을 트리로 만드는데 끝나지 않고 이를 실행하는데 의미가 있다.</p>
+
+<details>  <summary>인터프리터 패턴 구현</summary>  <div>
+
+    <p>표현식 혹은 하위표현식 객체로 트리를 만든 뒤에, 진짜 객체지향 방식으로 표현식이 자기 자신을 평가하게 한다.</p>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">Expression</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+  <span class="k">virtual</span> <span class="o">~</span><span class="n">Expression</span><span class="p">()</span> <span class="p">{}</span>
+  <span class="k">virtual</span> <span class="kt">double</span> <span class="n">evaluate</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>언어 문법에서  지원하는 모든 표현식 마다 위의 Expression를 상속 받는 클래스를 정의하면 된다.</p>
+
+    <h3 id="section">🚩 산술 연산자 예시</h3>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">NumberExpression</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Expression</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+  <span class="n">NumberExpression</span><span class="p">(</span><span class="kt">double</span> <span class="n">value</span><span class="p">)</span>
+  <span class="o">:</span> <span class="n">value_</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+  <span class="p">{}</span>
+  <span class="c1">//산술연산자는 값 평가를 진행한다.</span>
+  <span class="k">virtual</span> <span class="kt">double</span> <span class="n">evaluate</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="n">value_</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="nl">private:</span>
+  <span class="kt">double</span> <span class="n">value_</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>표현식은 자기를 평가하기 전에 먼저 포함된 하위표현식을 재귀적으로 평가한다.</p>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">AdditionExpression</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Expression</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+  <span class="n">AdditionExpression</span><span class="p">(</span><span class="n">Expression</span><span class="o">*</span> <span class="n">left</span><span class="p">,</span> <span class="n">Expression</span><span class="o">*</span> <span class="n">right</span><span class="p">)</span>
+  <span class="o">:</span> <span class="n">left_</span><span class="p">(</span><span class="n">left</span><span class="p">),</span>
+    <span class="n">right_</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+  <span class="p">{}</span>
+
+  <span class="k">virtual</span> <span class="kt">double</span> <span class="n">evaluate</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="c1">// 피연산자를 실행한다</span>
+    <span class="kt">double</span> <span class="n">left</span> <span class="o">=</span> <span class="n">left_</span><span class="o">-&gt;</span><span class="n">evaluate</span><span class="p">();</span>
+    <span class="kt">double</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right_</span><span class="o">-&gt;</span><span class="n">evaluate</span><span class="p">();</span>
+
+    <span class="c1">// 피연산자를 더한다.</span>
+    <span class="k">return</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="nl">private:</span>
+  <span class="n">Expression</span><span class="o">*</span> <span class="n">left_</span><span class="p">;</span>
+  <span class="n">Expression</span><span class="o">*</span> <span class="n">right_</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>하지만 작은 객체로 이뤄진 복잡한 프랙탈 트리 모양이 되어 아래와 같은 단점들이 존재한다.</p>
+
+    <ul>
+      <li>로딩되며 작은 객체들이 많이 생성되고 연결된다.</li>
+      <li>객체와 객체를 잇는 포인터가 많은 메모리를 소모한다.</li>
+      <li>포인터를 따라 하위표현식에 접근해야하므로 데이터 캐시에 치명적이며 가상 메서드를 호출해 명령어 캐시에도 치명적이다.</li>
+    </ul>
+
+    <p>따라서, 너무 느리며 메모리가 많이 쓰이므로 언어에서 인터프리터패턴은 잘 사용되지 않는다.</p>
+
+  </div>  </details>
+
+<h2 id="-기계어의-장점">👾 기계어의 장점</h2>
+<ol>
+  <li>밀도가 높다.
+    <ul>
+      <li>바이너리 데이터가 연속해서 꽉 차 있어서 비트 낭비가 없다.</li>
+    </ul>
+  </li>
+  <li>선형적이다.
+    <ul>
+      <li>명령어가 순서대로 실행된다.</li>
+    </ul>
+  </li>
+  <li>저수준이다.
+    <ul>
+      <li>명령어가 비교적 최소한의 작업만 한다.</li>
+    </ul>
+  </li>
+  <li>빠르다.
+    <ul>
+      <li>속도가 굉장히 빠르다.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="-패턴">🔗 패턴</h2>
+
+<p>명령어 집합은 실행할 수 있는 <strong>저수준 작업들을 정의</strong>한다. 명령어는 일련의 바이트로 인코딩된다. 가상머신은 중간 값들을 스택에 저장해가면서 이들 명령어를 하나씩 실행한다. 명령어를 조합함으로써 복잡한 고수준 행동을 정의할 수 있다.</p>
+
+<h3 id="-언제-쓰이는가">🤔 언제 쓰이는가?</h3>
+<ol>
+  <li>언어가 너무 저수준이라 만드는 데 손이 많이 가거나 오류가 생기기 쉬운 경우</li>
+  <li>컴파일 시간이나 다른 빌드 환경 때문에 반복 개발하기가 너무 오래 걸리는 경우</li>
+  <li>보안에 취약한 경우</li>
+</ol>
+
+<p>하지만, 바이트 코드는 네이티브 코드보다는 느리므로 성능에 민감하다면 적합하지 않다.</p>
+
+<h2 id="-other--reference">📌 Other &amp; Reference</h2>
+
+<p><a href="https://gameprogrammingpatterns.com/bytecode.html">gameprogrammingpatterns-game-loop</a></p>
+
+<p><strong>더 알아보기</strong></p>
+
+<p><a href="https://adnoctum.tistory.com/149">MFC 이중 버퍼 예제 관련 포스팅</a>
+<a href="https://gameprogrammingpatterns.com/update-method.html">gameprogrammingpatterns.com/update-method</a></p>
+:ET

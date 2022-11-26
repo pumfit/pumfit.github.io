@@ -1,0 +1,62 @@
+I"?<p>콘솔로그에 변수를 출력하는 경우 + 연산자를 통해 문자열을 더해 출력하는 방법보다 ` 와 ${}를 사용하는 방식이 추가적인 문자열 연산이 들어가지 않아 효과적임을 알고 있었지만 정확한 명칭을 알지 못해 명칭과 몰랐던 기능을 정리해보았다.</p>
+
+<h1 id="탬플릿-리터럴이란">🔍탬플릿 리터럴이란?</h1>
+
+<p>템플릿 리터럴은 내장된 표현식을 허용하는 문자열 리터럴이다.</p>
+
+<p>이 템플릿 리터럴은 이중 따옴표 나 작은 따옴표 대신 백틱 ` 을 사용한다.</p>
+
+<p>또한 <strong>플레이스 홀더</strong>를 이용하여 표현식을 넣을 수 있는데, 이는 $ 와 중괄호( <code class="language-plaintext highlighter-rouge">$ {expression}</code> ) 로 표기할 수 있다.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>    <span class="s2">`string text`</span>
+
+    <span class="s2">`string text line 1
+     string text line 2`</span>
+
+    <span class="s2">`string text </span><span class="p">${</span><span class="nx">expression</span><span class="p">}</span><span class="s2"> string text`</span>
+	<span class="nx">tag</span> <span class="s2">`string text </span><span class="p">${</span><span class="nx">expression</span><span class="p">}</span><span class="s2"> string text`</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>템플릿 리터럴 안에서 백틱 문자를 사용하려면 백틱 앞에 백슬러쉬()를 넣으면 사용할 수 있다.</p>
+
+<h2 id="multi-line-strings">🚩Multi-line strings</h2>
+
+<p>소스코드 내에 삽입되는 newline characters(\n 개행문자)은 template literal의 일부가 된다.</p>
+
+<p>일반 string 을 사용해, multi-line strings 을 표현하려면 아래와 같이 사용해야한다.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">string text line 1</span><span class="se">\n</span><span class="dl">"</span><span class="o">+</span>
+<span class="dl">"</span><span class="s2">string text line 2</span><span class="dl">"</span><span class="p">);</span>
+<span class="c1">// "string text line 1</span>
+<span class="c1">// string text line 2"</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>같은 효과를 template literal을 통해 얻기 위해서는, 아래와 같이 표현할 수 있다.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`string text line 1
+string text line 2`</span><span class="p">);</span>
+<span class="c1">// "string text line 1</span>
+<span class="c1">// string text line 2"</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="-other--reference">📌 Other &amp; Reference</h2>
+
+<p><a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals">MDN Web Doc - Template_literals</a></p>
+:ET

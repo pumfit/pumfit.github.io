@@ -1,0 +1,334 @@
+[
+  
+  {
+    "title": "chapter 11 바이트 코드(1)",
+    "url": "/posts/11BiteCode(1)/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, byteCode",
+    "date": "2022-11-19 21:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 바이트 코드 (Bytecode)가상 머신 명령어를 인코딩한 데이터로 행동을 표현할 수 있는 유연성을 제공한다.  인코딩 사용자가 입력한 문자나 기호들을 컴퓨터가 이용할 수 있는 신호 코드로 만드는 것을 말한다.📄데이터 &gt; 코드데이터를 수정하여 기능을 구현하면 코드와 데이터를 분리할 수 있다.행동을 데이터 파일에 따로 정의해두고 게임 코드에서 읽어서 실행할 수 있다면 핵심 게임 코드와 데이터를 안전하게 격리하며 여러 기능을 구현할 수 있다.🧩인터프리터 패턴실행하고 싶은 프로그래밍언어가 아래와 같은 수식을 지원한다고 하자(1+2) * (3-4)이런 표현식은 객체로 변환된다. 숫자 리터럴은 아래처럼 변환된다.숫자 상수는 단순히 숫자 값을 래핑한 객체이다. 연산자도 객체로 바뀌는데 이때 피연산자도 같이 참조한다.표현식은 객체 트리로 바뀌게 된다.인터프리터 패턴의 목표는 이런 추상 구문을 트리로 만드는데 끝나지 않고 이를 실행하는데 의미가 있다.  인터프리터 패턴 구현      표현식 혹은 하위표현식 객체로 트리를 만든 뒤에, 진짜 객체지향 방식으로 표현식이 자기 자신을 평가하게 한다.    class Expression{public:  virtual ~Expression() {}  virtual double evaluate() = 0;};        언어 문법에서  지원하는 모든 표현식 마다 위의 Expression를 상속 받는 클래스를 정의하면 된다.    🚩 산술 연산자 예시    class NumberExpression : public Expression{public:  NumberExpression(double value)  : value_(value)  {}  //산술연산자는 값 평가를 진행한다.  virtual double evaluate()  {    return value_;  }private:  double value_;};        표현식은 자기를 평가하기 전에 먼저 포함된 하위표현식을 재귀적으로 평가한다.    class AdditionExpression : public Expression{public:  AdditionExpression(Expression* left, Expression* right)  : left_(left),    right_(right)  {}  virtual double evaluate()  {    // 피연산자를 실행한다    double left = left_-&gt;evaluate();    double right = right_-&gt;evaluate();    // 피연산자를 더한다.    return left + right;  }private:  Expression* left_;  Expression* right_;};        하지만 작은 객체로 이뤄진 복잡한 프랙탈 트리 모양이 되어 아래와 같은 단점들이 존재한다.          로딩되며 작은 객체들이 많이 생성되고 연결된다.      객체와 객체를 잇는 포인터가 많은 메모리를 소모한다.      포인터를 따라 하위표현식에 접근해야하므로 데이터 캐시에 치명적이며 가상 메서드를 호출해 명령어 캐시에도 치명적이다.        따라서, 너무 느리며 메모리가 많이 쓰이므로 언어에서 인터프리터패턴은 잘 사용되지 않는다.    👾 기계어의 장점  밀도가 높다.          바이너리 데이터가 연속해서 꽉 차 있어서 비트 낭비가 없다.        선형적이다.          명령어가 순서대로 실행된다.        저수준이다.          명령어가 비교적 최소한의 작업만 한다.        빠르다.          속도가 굉장히 빠르다.      🔗 패턴명령어 집합은 실행할 수 있는 저수준 작업들을 정의한다. 명령어는 일련의 바이트로 인코딩된다. 가상머신은 중간 값들을 스택에 저장해가면서 이들 명령어를 하나씩 실행한다. 명령어를 조합함으로써 복잡한 고수준 행동을 정의할 수 있다.🤔 언제 쓰이는가?  언어가 너무 저수준이라 만드는 데 손이 많이 가거나 오류가 생기기 쉬운 경우  컴파일 시간이나 다른 빌드 환경 때문에 반복 개발하기가 너무 오래 걸리는 경우  보안에 취약한 경우하지만, 바이트 코드는 네이티브 코드보다는 느리므로 성능에 민감하다면 적합하지 않다.📌 Other &amp; Referencegameprogrammingpatterns-game-loop더 알아보기MFC 이중 버퍼 예제 관련 포스팅gameprogrammingpatterns.com/update-method"
+  },
+  
+  {
+    "title": "[Unity] UnityEngine.Time Time.time",
+    "url": "/posts/TimeClass/",
+    "categories": "Unity, UnityEngine",
+    "tags": "time, timeclass",
+    "date": "2022-11-10 21:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "⏰유니티 Time.time 정리Time.time을 이용하여 한 씬의 플레이 시간을 체크하고자 했다. 하지만 생각대로 씬 전환이 되면 Time.time이 초기화되는 것이 아니라는 것을 알게되어 정리를 하게 되었다.⏱️UnityEngine.Time유니티에서 제공하는 시간 정보를 가져오기 위한 인터페이스이다.⌚Time.timeTime.time은 게임 시작 이후의 시간이다. 이 시간은 해당되는 프레임의 시작 시간으로 한 프레임 내에서 여러번 호출된다면 동일하게 해당 프레임의 시작 시간이 호출된다.FixedUpdate에서 이 Time.time을 호출한다면 fixedTime과 동일한 값을 반환한다.Awake에서는 시간 값은 정의되지 않으며, Awake가 완료된 이후부터 시간이 흐른다.🔍 씬 내에서의 진행 시간 구하는 방법1. Time.deltaTime을 사용하기private Update(){\tplayTime += Time.deltaTime;}2. Time.time을 사용하기private Start(){\t/*Reset StartTime*/\tstartTime = Time.time;}private Update(){\tplayTime = Time.time - startTime;}📌 Other &amp; Referencehttps://docs.unity3d.com/ScriptReference/Time-time.html"
+  },
+  
+  {
+    "title": "[JS] 템플릿 리터럴",
+    "url": "/posts/Backtick/",
+    "categories": "Language, JS",
+    "tags": "js, templateliteral",
+    "date": "2022-10-26 21:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "콘솔로그에 변수를 출력하는 경우 + 연산자를 통해 문자열을 더해 출력하는 방법보다 ` 와 ${}를 사용하는 방식이 추가적인 문자열 연산이 들어가지 않아 효과적임을 알고 있었지만 정확한 명칭을 알지 못해 명칭과 몰랐던 기능을 정리해보았다.🔍탬플릿 리터럴이란?템플릿 리터럴은 내장된 표현식을 허용하는 문자열 리터럴이다.이 템플릿 리터럴은 이중 따옴표 나 작은 따옴표 대신 백틱 ` 을 사용한다.또한 플레이스 홀더를 이용하여 표현식을 넣을 수 있는데, 이는 $ 와 중괄호( $ {expression} ) 로 표기할 수 있다.    `string text`    `string text line 1     string text line 2`    `string text ${expression} string text`\ttag `string text ${expression} string text`템플릿 리터럴 안에서 백틱 문자를 사용하려면 백틱 앞에 백슬러쉬()를 넣으면 사용할 수 있다.🚩Multi-line strings소스코드 내에 삽입되는 newline characters(\\n 개행문자)은 template literal의 일부가 된다.일반 string 을 사용해, multi-line strings 을 표현하려면 아래와 같이 사용해야한다.console.log(\"string text line 1\\n\"+\"string text line 2\");// \"string text line 1// string text line 2\"같은 효과를 template literal을 통해 얻기 위해서는, 아래와 같이 표현할 수 있다.console.log(`string text line 1string text line 2`);// \"string text line 1// string text line 2\"📌 Other &amp; ReferenceMDN Web Doc - Template_literals"
+  },
+  
+  {
+    "title": "chapter 10 업데이트 메서드",
+    "url": "/posts/10UpdateMethod/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, updateMethod",
+    "date": "2022-10-22 21:56:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 업데이트 메서드 (Update Method)🤔패턴 의도컬렉션에 들어 있는 객체별로 한 프레임 단위의 작업을 진행하라고 알려 전체를 시뮬레이션한다.🧐 업데이트 메서드는 왜 사용되는가?게임에서 플레이어가 보물을 찾으러 이동할 때 지키던 해골 경비병이 캐릭터에게 다가가거나 왔다갔다하며 순찰해야할 것 이다.이런 움직임을 한프레임에 한번에 진행하면 갑자기 캐릭터가 순간이동하게 된다. 한프레임에 한 걸음 씩 움직이도록 해야 캐릭터가 움직이는 것처럼 보일 것 이다.👩‍💻예제 코드게임 루프 내에서 해골 병사가 좌우로 왔다 갔다하는 코드를 만들어보면 아래와 같다.Entity skeleton;bool patrollingLeft = false; //이동 방향 변수double x = 0;// 게임의 메인 루프while (true){  if (patrollingLeft)  {    x--;    if (x == 0) patrollingLeft = false;  }  else  {    x++;    if (x == 100) patrollingLeft = true;  }  skeleton.setX(x);  // 유저 입력 처리와 게임 렌더링을 진행한다...}이와 같이 메인루프에 해골병사의 이동 코드가 들어가게되면서 메인 루프에 여러 코드가 추가되었다. 해골 병사가 다른 기능이 추가되거나 다른 여러 몬스터들이 추가되면 각 개체에 대한 변수, 로직등으로 메인루프가 복잡해지게 된다.당연히 이 문제의 해결책은 모든 개체가 자신의 동작을 캡슐화하여 해결할 수 있다.이를 위해 추상 메서드 update()를 정의해 추상 계층을 더한다. 게임 루프는 업데이트가 가능하다는 것만을 아는 객체 컬렉션을 관리하며 게임 엔진과 다른 객체를 분리한다.🧩 업데이트 메서드 패턴이제 게임 월드는 객체 컬렉션을 관리한다. 각 객체는 한 프레임 단위의 동작을 시뮬레이션하기 위한 업데이트 메서드를 구현한다. 매 프레임마다 게임은 컬랙션에 들어 있는 모든 객체를 업데이트한다.⏰ 언제 사용되는가?  동시에 동작해야 하는 객체나 시스템이 게임에 많다.  각 객체의동작은 다른 객체와 거의 독립적이다.  객체는 시간의 흐름에 따라 시뮬레이션되어야 한다.🔍사용 시 주의 사항🚩 코드를 한 프레임 단위로 끊어서 실행하는 게 더 복잡하다.동작 코드를 프레임마다 실행되도록 쪼개 넣으면 코드가 복잡해져서 구현 비용이 좀 더 발생한다.🚩다음 프레임에서 다시 시작할 수 있도록 현재 상태를 저장해야 한다.이와 같이 프레임이 진행되면서 변화된 상태에 대한 저장은 상태 패턴을 사용하는 것이 좋다.🚩모든 객체는 매 프레임 마다 시뮬레이션되지만 진짜로 동시에 되는 건 아니다.객체 컬렉션 내에서 업데이트가 순차적으로 이뤄지므로 순서가 중요해진다.객체 목록에서 A가 B보다 앞에 있다면 A는 B의 이전 프레임 상태를 참조하게 된다. B의 차례에는 A는 이미 업데이트된 상태이므로 A의 현재 프레임 상태를 보게된다.🚩업데이트 도중에 객체 목록을 바꾸는 건 조심해야 한다.게임이 진행되다보면 객체를 게임에 추가 및 삭제하는 코드도 포함하게 된다.객체 추가의 경우객체가 새로 생긴다면 객체 목록 뒤에 추가하면 목록을 순회하며 마지막에 새로 생긴 객체까지 업데이트하게된다.다만,이때 새로 생성된 객체가 바로 작동되므로 이를 방지하고 싶다면 업데이트 루프를 시작하기 전에 목록에 있는 객체 개수를 미리 저장해 두고 그만큼만 업데이트를 진행하면 된다.int numObjectsThisTurn = numObjects_;for (int i = 0; i &lt; numObjectsThisTurn; i++){  objects_[i]-&gt;update();}객체 삭제의 경우객체가 삭제되었다면 객체 목록에서 빼내야한다. 하지만 삭제해버린다면 의도치 않게 객체를 하나 건너뛸 수 있다.이를 고려하여 객체를 삭제할때 순회 변수 i를 업데이트하는 방법도 있다. 또는 목록을 다 순회할 때까지 삭제를 늦추거나 업데이트 도중 죽은 객체의 변수를 죽음으로 표시하고 넘어갈 수 도 있다.예제 코드아래는 해골 병사,석상등등을 표현할 객체 클래스이다.class Entity{public:  Entity()  : x_(0), y_(0)  {}  virtual ~Entity() {}  virtual void update() = 0; // 추상 메서드 update  double x() const { return x_; }  double y() const { return y_; }  void setX(double x) { x_ = x; }  void setY(double y) { y_ = y; }private:  double x_;  double y_;};이제 게임의 월드 클래스에서 개체 컬렉션 관리가 진행된다.{public:  World()  : numEntities_(0)  {}  void gameLoop();private:  Entity* entities_[MAX_ENTITIES];  int numEntities_;};게임 루프는 아래와 같이 돌아간다.void World::gameLoop(){  while (true)  {    // Handle user input...    // 각 개체의 업데이트를 호출한다.    for (int i = 0; i &lt; numEntities_; i++)    {      entities_[i]-&gt;update();    }    // Physics and rendering...  }}개체를 상속받는 스켈레톤에 대한 구현은 아래와 같다. 상태와 로직이 메인 루프와 분리되어 구현된다.class Skeleton : public Entity{public:  Skeleton()  : patrollingLeft_(false)  {}  virtual void update()  {    if (patrollingLeft_)    {      setX(x() - 1);      if (x() == 0) patrollingLeft_ = false;    }    else    {      setX(x() + 1);      if (x() == 100) patrollingLeft_ = true;    }  }private:  bool patrollingLeft_;};이와 같이 업데이트 메소드 패턴을 사용하면 객체가 자신이 필요한 모든 걸 직접 들고 관리 할 수 있디 때문에 게임 월드에 새로운 개체를 추가하기가 쉬워진다.🤔업데이트 메서드는 어느 클래스에 둬야할까?🚩개체 클래스가장 간편한 방법이나 새로운 동작을 만들때 마다 개체 클래스를 상속받아야 한다면 작업이 어렵다. 단일 상속 구조로 코드를 매끄럽게 재사용할 수 없는 순간에 방법이 없다.🚩컴포넌트 클래스컴포넌트는 알아서 자기 자신을 업데이트하며 컴포넌트 패턴은 한 개체의 일부를 개체의 다른 부분들과 디커플링하여 렌더링,물리,AI 모두 스스로 돌아가도록 한다.🚩위임 클래스상태 패턴, 타입 객체 패턴등 하나를 쓴다면 위임 클래스에 update()를 두는 게 자연스럽다. 여전히 update() 메서드는 개체 클래스에 있지만 가상 함수가 아니며 위임 객체에 포워딩을 해준다.void Entity::update(){  // Forward to state object.  state_-&gt;update();}새로운 동작을 정의하고자 한다며 위임 객체를 바꾸기만 하면 된다.컴포넌트 방식과 마찬가지로 완전히 새로운 상속 클래스를 정의하지 않아도 동작을 바꿀 수 있는 유연성을 얻는다.🪄휴먼 객체 처리사용 불능 상태이거나 화면 밖에 있는 등의 이유로 업데이트가 필요없는 객체가 생길 수 있다. 이런 객체가 많다면 매 프레임마다 쓸데없이 CPU 클럭 낭비가 생길 수 가 있다.이를 방지하는 방법으로 활성 객체만 모여 있는 컬렉션을 하나 더 둘 수 도 있다. 다만 이경우엔 두 번째 컬렉션을 위해 메모리를 추가로 사용해야한다는 점과 컬랙션 두 개의 동기화를 유지해야 한다는 점을 고려해야한다.📌 Other &amp; Referencegameprogrammingpatterns.com/update-method더 알아보기마이크로소프트 XNA 플랫폼 Game 클래스"
+  },
+  
+  {
+    "title": "chapter 9 게임 루프 (2)",
+    "url": "/posts/09GameLoop02/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, gameLoop",
+    "date": "2022-10-10 14:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 게임 루프 (Game Loop)게임의 진행 시간을 유저 입력,프로세서 속도와 디커플링한다.⏱️ 자투리 시간업데이트는 고정 시간 간격을 하더라도, 렌더링은 그냥 진행된다. 이때 두 업데이트 사이에 렌더링이 되는 경우가 생길 수 있다.업데이트는 고정간격으로 진행되지만 렌더링은 가능할 때마다 진행된다.lag 값을 통해 렌더링할때 업데이트 프레임이 시간적으로 얼마나 떨어져 있는지를 정확히 알 수 있다.  즉, lag값은 다음 프레임까지 남은 시간이다.렌더링을 할 때 아래처럼 인수를 넘겨준다.render(lag/ MS_PER_UPDATE); 이제 렌더링은 정규화를 통해 0~1값이 넘어가므로 프레임레이트를 알 필요가 없어진다.⏰게임 루프 패턴 사용 시 주의점🔋전력 소모 문제      최대한 빠르게 실행하기    게임 루프에서 따로 OS의 sleep을 호출하지 않고 시간이 남으면 FPS나 그래픽 품질을 더 높인다.    하지만 해당 방식은 전력도 최대한으로 사용된다.        프레임 레이트 제한하기    프레임레이트에 상한을 두어 게임 루프에서 프레임 시간 안에 할 일이 끝낫다면 나머지 시간동안은 sleep을 호출한다.    이 방식은 배터리 소모를 줄일 수 있다.  👟게임 플레이속도 제어  동기화 없는 고정 시간 간격 방식          게임 속도는 하드웨어와 게임 복잡도에 바로 영향을 받는다. 조그만한 차이가 생겨도 게임속도가 계속 변화하게된다.        동기화하는 고정 시간 간격 방식          전력 효율이 높다. 매 틱마다 휴식할 수도 있어 전력을 아낄 수 있다.      게임이 너무 빨라지지 않지만 게임이 너무 느려질 수 있다. 한 프레임에서 게임 업데이트와 렌더링이 오래 걸리면 게임 실행이 느려진다. 또한 시간을 따라 잡기 위해 렌더링 프레임을 낮추지 않다보니 게임플레이가 느려진다.        가변 시간 간격 방식 (Bad)          너무 느리거나 너무 빠른 곳에서도 맞춰서 플레이 할 수 있다. 게임이 현실 시간을 따라가지 못한다면, 따라 잡을 수 있도록 시간 간격을 늘린다.      게임 플레이를 불안정하고 비 결정적으로 만든다. 물리나 네트워크 구현에 있어 문제가 발생한다.            업데이트는 고정 시간 간격으로,렌더링은 가변 시간 간격으로    해당 방식은 고정 시간 간격으로 업데이트 하되, 실제 시간을 따라 잡아야한다면 렌더링 프레임을 낮춘다.          너무 느리거나 너무 빨라도 잘 적응한다. 게임을 실시간으로 업데이트할 수만 있다면 뒤쳐질 일은 없다. 최고사양 하드웨어에서는 훨씬 부드럽게 보여줄 수 있다.      휠씬 복잡하다. 구현이 더 복잡하다는게 주된 단점이다. 시간 간격을 정할때  고사양 유저와 저사양 유저를 모두 고려하여 간격을 정해야한다.      🔍유니티에서의 게임 루프유니티 엔진에서 제공되는 이벤트 함수들을 MonoBehaviour 를 상속받으면 쓸 수 있다. 이 이벤트 함수들을 통해 유니티에서 구현된 게임 루프를 사용할 수 있다.  유니티 스크립트 라이프 사이클 플로우 차트      이벤트 함수의 실행 순서    이벤트 함수의 실행 순서는 위와 같고 아래는 메뉴얼 중 자주 사용하는 이벤트 함수에 대해 가져와 보았다.🚩첫 번째 씬 로드다음 함수는 씬이 시작할 때 (씬 내에 있는 오브젝트마다 한 번) 호출됩니다.      Awake:  이 함수는 항상 Start 함수 전에 호출되며 프리팹이 인스턴스화 된 직후에 호출됩니다. 게임 오브젝트가 시작하는 동안 비활성 상태인 경우 Awake 함수는 활성화될 때까지 호출되지 않습니다.        OnEnable:  (오브젝트가 활성화된 경우에만): 오브젝트 활성화 직후 이 함수를 호출합니다. 레벨이 로드되거나 스크립트 컴포넌트를 포함한 게임 오브젝트가 인스턴스화될 때와 같이 MonoBehaviour를 생성할 때 이렇게 할 수 있습니다.  씬에 추가된 모든 오브젝트에 대해 Start, Update 등 이전에 호출된  모든  스크립트를 위한 Awake 및 OnEnable 함수가 호출됩니다. 따라서 게임플레이 도중 오브젝트를 인스턴스화될 때는 실행되지 않습니다.🚩 첫 번째 프레임 업데이트 전에  Start:  스크립트 인스턴스가 활성화된 경우에만 첫 번째 프레임 업데이트 전에 호출됩니다.씬 에셋에 포함된 모든 오브젝트에 대해 Update 등 이전에 호출된 모든 스크립트를 위한 Start 함수가 호출됩니다. 따라서 게임플레이 도중 오브젝트를 인스턴스화될 때는 실행되지 않습니다.🚩 업데이트 순서게임 로직, 상호작용, 애니메이션, 카메라 포지션의 트랙을 유지할 때, 사용 가능한 몇몇 다른 이벤트가 존재합니다. 일반적인 패턴은  Update  함수에 대부분의 작업을 수행하는 것이지만, 사용할 수 있는 다른 함수도 있습니다.      FixedUpdate:  FixedUpdate  는 종종  Update  보다 더 자주 호출됩니다. 프레임 속도가 낮은 경우 프레임당 여러 번 호출될 수 있으며 프레임 속도가 높은 경우 프레임 사이에 호출되지 않을 수 있습니다. 모든 물리 계산 및 업데이트는  FixedUpdate  후 즉시 발생합니다.  FixedUpdate  의 움직임 계산을 적용할 때  Time.deltaTime  만큼 값을 곱할 필요가 없습니다.  FixedUpdate  가 프레임 속도와 관계없이 신뢰할 수있는 타이머에서 호출되기 때문입니다.        Update:  Update  는 프레임당 한 번 호출됩니다. 프레임 업데이트를 위한 주요 작업 함수입니다.        LateUpdate:  LateUpdate  는  Update  가 끝난 후 프레임당 한 번 호출됩니다.  Update  에서 수행된 모든 계산은  LateUpdate  가 시작할 때 완료됩니다.  LateUpdate  는 일반적으로 다음의 3인칭 카메라에 사용합니다. 캐릭터를 움직이고  Update  로 방향을 바꾸게 하는 경우  LateUpdate  에서 모든 카메라 움직임과 로테이션 계산을 수행할 수 있습니다. 이렇게 하면 카메라가 포지션을 추적하기 전에 캐릭터가 완전히 움직였는지 확인할 수 있습니다.  🚩 코루틴  📌 일반적인 코루틴 업데이트는 Update 함수가 반환된 후 실행됩니다.코루틴은 주어진 YieldInstruction이 완료될 때까지 실행을 중단(양보)할 수 있는 함수입니다. 코루틴의 다른 사용법은 다음과 같습니다.  yield  코루틴은 모든 Update 함수가 다음 프레임에 호출된 후 계속됩니다.  yield WaitForSeconds  지정한 시간이 지난 후, 모든 Update 함수가 프레임에 호출된 후 계속됩니다.  yield WaitForFixedUpdate  모든 FixedUpdate가 모든 스크립트에 호출된 후 계속됩니다. FixedUpdate 전에 코루틴이 양보하면 현재 프레임의 FixedUpdate 이후에 재개합니다.  yield WWW  WWW 다운로드가 완료된 후 계속됩니다.  yield StartCoroutine  코루틴을 연결하고 MyFunc 코루틴이 먼저 완료되기를 기다립니다.📌 Other &amp; Referencegameprogrammingpatterns-game-loop더 알아보기이벤트 함수의 실행 순서"
+  },
+  
+  {
+    "title": "chapter 9 게임 루프 (1)",
+    "url": "/posts/09GameLoop01/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, gameLoop",
+    "date": "2022-10-10 14:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 게임 루프 (Game Loop)게임의 진행 시간을 유저 입력,프로세서 속도와 디커플링한다.이벤트 루프아래는 전형적인 이벤트 루프이다. 아래와 같이 유저의 입력이 들어오길 기다린다.while (true){  Event* event = waitForEvent();  dispathEvent(event);}게임 루프의 다른 점은 루프에서 사용자 입력도 처리하지만 계속 사용자 입력만 기다리고 있는 것은 아니라는 점이다. 게임 루프는 이외에도 끊임없이 돌아가며 여러 처리들을 진행한다.while (true){  processInput();  update();  render();}⏰게임 내의 시간프레임 레이트 / FPS(frames per second,초당 프레임 수)  프레임 레이트(Frame rate)란 디스플레이 장치가 화면 하나의 데이터를 표시하는 속도로 FPS는 1초 동안 보여주는 화면의 수를 가리키며, 로마자 약어 및 단위로는 fps(또는 프레임/초)를 쓴다.게임 루프가 빠르게 돌아가면 FPS가 증가하여 화면이 부드럽게 보인다. 반대로 게임 루프가 느리면 스톱모션과 같이 끊겨보일 수 있다.✔️ 프레임 레이트 결정 요인  한 프레임에 얼마나 많은 작업을 진행하는가  코드가 실행되는 플랫폼의 속도어떤 하드웨어에서라도 일정한 속도로 실행될 수 있도록 하는 것이 게임 루프의 핵심이다.👩‍💻예제 코드🔍 간결한 게임 루프 예시while (true){  processInput();  update();  render();}🤔 예제의 문제점게임 실행 속도를 제어할 수 없다는 문제점을 가지고 있다. 하드웨어별로 빠른 하드웨어라면 루프가 빠르게 진행되어 게임이 빠르게 진행되고 느린 하드웨어라면 게임이 느리게 돌아간다.아래는 이와 같은 문제점을 해결하기 위한 방안의 예제들이다.⏰ 기다리기주어진 프레임내에 모든 진행이 완료되었다면 다음 프레임까지 남은 시간을 기다리는 방식이다.while (true){  double start = getCurrentTime();  processInput();  update();  render();  //남은 시간만큼 기다린다.  sleep(start + MS_PER_FRAME - getCurrentTime());}이 방식은 게임이 너무 빨라지는 것을 막아준다. 하지만, 게임이 너무 느려지는 것은 막지 못한다.⏰ 가변 시간 간격 적용하기게임 루프 내 시간 간격의 문제점은 아래와 같다.  업데이트 마다 정해진 만큼의 게임 시간이 진행된다.  업데이트하는 데에는 현실 시간이 어느 정도 걸린다.  프레임 이후로 실제 시간이 얼마나 지났는지에  따라 시간 간격을 조절하면 해당 문제를 해결할 수 있다.double lastTime = getCurrentTime();//이전프레임 종료시간while (true){  double current = getCurrentTime();//현재프레임 시작시간  double elapsed = current - lastTime;//실제 현실시간 간격  processInput();  update(elapsed);//업데이트에서 경과된 현실 시간만큼 게임 상태를 진행한다.  render();  lastTime = current;}이와 같은 가변 시간 간격에서는 속도와 지나간 시간을 곱해 이동 거리를 구한다. 업데이트에서 받아온 시간 간격이 커지면 이동량이 더 많아지게 된다.따라서, 업데이트 간격에 상관없이 실제 시간 동안 같은 거리를 이동하게된다.유니티에서는 이 예제의 elapsed 값을 Time.deltaTime으로 사용할 수 있다.  Time.deltaTime : 마지막 프레임에서 현재 프레임까지의 간격(초)입니다. (The interval in seconds from the last frame to the current one)🤔 예제의 문제점하지만 위 예제의 경우 비 결정적이며 불안정하다는 문제점이 생긴다.⏰ 따라 잡기해당 방식은 물리,AI 와 같은 로직은 고정시간 간격을 사용하고 렌더링 간격은 가변시간 간격으로 만들어 프로세서 낭비를 줄인다.double previous = getCurrentTime();double lag = 0.0; // 프레임이 시작할 때마다 실제 시간이 얼마나 지났는 지 저장하는 변수while (true){  double current = getCurrentTime();  double elapsed = current - previous;  previous = current;  lag += elapsed;  processInput();  while (lag &gt;= MS_PER_UPDATE)  {    update();    lag -= MS_PER_UPDATE;  }  render();}이전 루프 이후로 실제 시간이 얼마나 지났는 지 (elapsed) 확인한 후, 게임의 현재가 실제 시간의 현재를 따라잡을때까지 (lag) 고정 시간 간격만큼 게임 시간을 여러 번 시뮬레이션한다.lag 값은 실제 시간에 비해  게임 시간이 얼마나 뒤처졌는지를 의미한다. while문 안에서 고정 시간 간격으로 루프를 돌며 실제 시간을 따라 잡을 때까지 업데이트를 진행한다.시간 간격인 MS_PER_UPDATE 은 시각적인 프레임 레이트가 아니다. 게임을 업데이트 간격에 대한 값으로 이 간격이 짧을 수록 실제 시간을 따라잡기가 더 오래걸린다.  60FPS 보다 더 빠르게  돌아가도록 시간 간격을 충분히 짧게 잡아 부드러운 게임 연출을 보여주는게 좋다.  시간 간격이 너무 짧아 가장 느린 하드웨어에서의 update() 실행에 걸리는 시간보다 짧아지면 안된다. 이 경우 게임이 멈춰버린다.유니티의 FixedUpdate()가 해당 방식을 사용한다.FixedUpdate는 고정 프레임 속도 프레임에 호출된다.아래는 유니티의 FixedUpdate와 Update의 시간 간격을 비교하는 간단한 예시 이다.// https://learn.unity.com/tutorial/update-mic-fixedupdateusing UnityEngine;using System.Collections;public class UpdateAndFixedUpdate : MonoBehaviour{    void FixedUpdate ()    {        Debug.Log(\"FixedUpdate time :\" + Time.deltaTime);        // 항상 시간 간격이 동일하게 나온다. 물리 처리에는 FixedUpdate를 사용해야한다.    }        void Update ()    {        Debug.Log(\"Update time :\" + Time.deltaTime);        // 시간 간격이 유동적이다.    }}📌 Other &amp; Referencegameprogrammingpatterns-game-loopMonoBehaviour.FixedUpdate()더 알아보기이벤트 함수의 실행 순서Update 및 FixedUpdate"
+  },
+  
+  {
+    "title": "깃블로그 chirpy 테마 -- layout: home # Index page -- 수정",
+    "url": "/posts/Error/",
+    "categories": "ETC, blog",
+    "tags": "jekyll, chirpy",
+    "date": "2022-10-09 20:22:00 +0900",
+    
+
+
+
+
+
+    "snippet": "👾 문제 사항해당 블로그는 Chirpy 테마를 fork해서 사용하고 있는데 정상적으로 사용하다가어느 순간 홈화면에 --- layout: home # Index page --- 만 뜨고 블로그가 안보이기 시작했다.로컬 구동시에는 정상적으로 보이고 기존에 수정했던 layout 문제인가 싶어서 롤백도 해보고 루비 버전도 맞춰봤지만 아래 페이지가계속 나오고 홈화면이 계속 나오질 않았다.🧐 해결 방법블로그 주소/main으로 이동한다. 404 에러 화면이 나오고 아래 팝업에 나오는 update를 누르면 다시 정상적으로 포스트가 보인다.웹과 모바일 둘다 동일하게 발생해서 같은 방식으로 해결하였다.🤔 더 알아보기기존에도 새 포스트를 올리면 수동으로 페이지에 접속해서 저 업데이트를 눌러야 새 포스트가 정상적으로 보였는데어떤 이유에서 먹통이 된 것이고 꼭 수동으로 업데이트를 해줘야 하는 건지 좀 더 알아봐야 할 것 같다."
+  },
+  
+  {
+    "title": "chapter 8 이중 버퍼 패턴",
+    "url": "/posts/08DoubleBuffer/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, doublebuffer",
+    "date": "2022-10-07 21:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 이중 버퍼 (Double Buffer)이중 버퍼는 여러 순차 작업의 결과를 한번에 보여주기 위해 사용된다.이중버퍼의 필요성  티어링(tearing,화면 밀림)현상게임이 실행되는 동안 비디오 디스플레이가 프레임버퍼를 반복해서 읽는데 프레임버퍼에 값이 쓰이는 와중에 비디오 드라이버가 프레임 버퍼 값을 읽어 값을 쓰는 도중 읽게 되면 화면이 깨지게되는 것이다.이때, 이중 버퍼 패턴을 통해 코드에서는 픽셀을 한번에 하나씩 그리되, 비디오 드라이버는 전체 픽셀을 한번에 다 읽을 수 있게 한다.프레임버퍼를 두개 준비한다. 하나의 프레임버퍼는 보이는 프레임저퍼로 값은 해당 버퍼에서만 읽을 수 있다. 그동안 렌더링 코드는 다른 프레임버퍼에 값을 쓰고 모든 값을 쓴 뒤 버퍼를 교체한다.⏰언제 이중 버퍼를 사용하는가?  순차적으로 변경해야 하는 상태가 있다.  이 상태는 값 변경 도중에도 접근 가능해야한다.  바깥 코드에서는 작업 중인 상태에 접근할 수 없어야 한다.  싱태에 값을 쓰고 있는 도중에도 대기없이 바로 접근이 가능해야한다.🧐구현시 주의 사항      교체 연산 자체에 시간이 걸린다.    값을 모두 입력한 경우 버퍼를 교체하게 되는데 이 교체 연산은 원자적이어야 한다. 즉, 교체가 진행될 때 두 버퍼 모두에 접근 할 수 없어야 한다는 점을 생각해야한다.        버퍼가 두 개 필요하다.    메모리 버퍼가 두 개가 필요하므로 메모리 부족한 상황에서는 이중 버퍼 패턴이 부담이 될 수 있다.  👩‍💻예제 코드아래는 단순 그래픽 시스템 예제이다.class Framebuffer // 프레임 버퍼 클래스{public:  Framebuffer() { clear(); }  void clear() // 모든 버퍼를 흰색으로 초기화한다.  {    for (int i = 0; i &lt; WIDTH * HEIGHT; i++)    {      pixels_[i] = WHITE;    }  }  void draw(int x, int y)// 특정 픽셀을 검은 색으로 칠한다.  {    pixels_[(WIDTH * y) + x] = BLACK;  }  const char* getPixels()//픽셀 배열을 불러온다.  {    return pixels_;  }private:  static const int WIDTH = 160;  static const int HEIGHT = 120;  char pixels_[WIDTH * HEIGHT];};getPixels() 메서드를 통해 픽셀 데이터를 담고 있는 메모리 배열에 접근하며 비디오 드라이버가 화면을 그리기 위해 버퍼값을 해당 함수를 통해 호출한다.class Scene{public:  void draw()  {    buffer_.clear();\t// 씬에서 버퍼의 draw함수를 통해 순차적으로 그림을 그려나간다.    buffer_.draw(1, 1);    buffer_.draw(4, 1);    buffer_.draw(1, 3);    // 이 중간에 비디오 드라이버가 getPixels을 호출하면 문제가 생기게 된다.    buffer_.draw(2, 4);    buffer_.draw(3, 4);    buffer_.draw(4, 3);  }  Framebuffer&amp; getBuffer() { return buffer_; }private:  Framebuffer buffer_;};여러번 draw()를 호출해 그림을 그리는 것을 볼 수 있다. 이때, 드라이버에서는 언제나 getPixels()을 통해 버퍼에 접근할 수 있다.아래는 이중 버퍼를 통해 문제를 해결하는 방법이다.class Scene{public:  Scene() // 버퍼 포인터 값을 초기화한다.  : current_(&amp;buffers_[0]),    next_(&amp;buffers_[1])  {}  void draw()  {    next_-&gt;clear();    next_-&gt;draw(1, 1);    // ...    next_-&gt;draw(4, 3);    swap();// 모든 정보를 쓴 뒤 next버퍼를 current버퍼로 교체한다.  }//읽는 버퍼는 current_를 반환한다.  Framebuffer&amp; getBuffer() { return *current_; }private:  void swap()  {    // 버퍼 포인터만 교체한다.    Framebuffer* temp = current_;    current_ = next_;    next_ = temp;  }  Framebuffer  buffers_[2]; // 버퍼를 포인터가 current,next 두가지 버퍼를 가리킨다.  Framebuffer* current_; // 읽기가 가능한 버퍼  Framebuffer* next_; // 쓰기가 가능한 버퍼};이제 렌더링할 때는 next_ 포인터가 가리키는 다음  버퍼에 쓰고 그리고, 비디오 드라이버는 current_ 포인터로 현재 버퍼에 접근해 픽셀을 읽어온다.이렇게 이중 버퍼를 사용하면 getBuffer()가 호출되면 이전에 그린 화면이 들어있는 current 버퍼를 얻게 된다.🔍유니티에서의 이중 버퍼 활용커스텀 렌더 텍스처커스텀 렌더 텍스처 유니티 도큐먼트 커스텀 렌더 텍스처는 셰이더를 사용하여 텍스처에 직접 렌더링할 수 있는 렌더 텍스처의 확장이다.유니티에서 커스텀렌더텍스처를 사용할 때CustomRenderTexture.doubleBuffered 값을 설정하여 업데이트 도중에도 접근가능하게 설정할 수 있다.            프로퍼티      기능                  Double Buffered      텍스처가 이중 버퍼링됩니다. 각 업데이트는 두 개의 버퍼를 스왑하여 사용자가 셰이더에서 이전 업데이트의 결과를 읽을 수 있도록 합니다.      📌 Other &amp; Referencegame-programming-patterns github - double-bufferTearing ImagedoubleBuffer Image👾더 알아보기MFC 이중 버퍼 예제 관련 포스팅OpenGL에서 사용되는 swapbuffers"
+  },
+  
+  {
+    "title": "chapter 7 상태 패턴 (2)",
+    "url": "/posts/07State02/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, state",
+    "date": "2022-10-04 20:20:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 상태 (State)  객체 내부 상태에 따라 스스토 행동을 변경할 수 있게 허가하는 패턴으로, 이렇게 하면 객체는 마치 자신의 클래스를 바꾸는 것 처럼 보인다.  GoF 디자인 패턴 395p상태 패턴의 필요성어떤 캐릭터에 대해 이동로직을 아래와 같이 구현한다 해보자// https://github.com/munificent/game-programming-patterns/blob/master/code/cpp/state.h// 각 상태별로 복잡한 예외처리가 필요하다.    void Heroine::handleInput(Input input)    {      if (input == PRESS_B)      {        if (!isJumping_ &amp;&amp; !isDucking_)        {          // Jump...        }      }      else if (input == PRESS_DOWN)      {        if (!isJumping_)        {          isDucking_ = true;          setGraphics(IMAGE_DUCK);        }        else        {          isJumping_ = false;          setGraphics(IMAGE_DIVE);        }      }      else if (input == RELEASE_DOWN)      {        if (isDucking_)        {          // Stand...        }      }    }  }위와 같이 구현하게 된다면 상태에 맞는 동작을 실행하기위해 여러 플래그로 확인이 필요하고 상태가 늘어남에 따라 더 많은 예외처리가 필요하다.🛠️FSM (finite-state machine, 유한 상태 기계)상태 기계를 그린 플로우 차트FSM의 정의  가질 수 있는 상태가 한정된다.  한번에 한가지의 상태만 될 수 있다.  입력이나 이벤트가 기계에 전달된다.  각 상태에는 입력에 따라 다음 상태로 바뀌는 전이가 있다.📌열거형과 다중 선택문으로 만드는 FSM여러 변수 중 하나만 참일 때가 많다면 열거형Enum을 사용하는 것이 좋다.    enum State    {      STATE_STANDING,      STATE_JUMPING,      STATE_DUCKING,      STATE_DIVING    };아래와 같이 switch case문으로 상태에따라 분기가 가능하도록 한다.    //^state-switch    void Heroine::handleInput(Input input)    {      switch (state_)      {        case STATE_STANDING:          if (input == PRESS_B)          {            state_ = STATE_JUMPING;            yVelocity_ = JUMP_VELOCITY;            setGraphics(IMAGE_JUMP);          }          else if (input == PRESS_DOWN)          {            state_ = STATE_DUCKING;            setGraphics(IMAGE_DUCK);          }          break;        case STATE_JUMPING:          if (input == PRESS_DOWN)          {            state_ = STATE_DIVING;            setGraphics(IMAGE_DIVE);          }          break;                  case STATE_DUCKING:          if (input == RELEASE_DOWN)          {            state_ = STATE_STANDING;            setGraphics(IMAGE_STAND);          }          break;          //^omit        case STATE_DIVING:          break;          //^omit      }    }🗳️ 상태 패턴📌상태 인터페이스 정의상태 인터페이스는 상태에 의존하는 코드 즉, 다중 선택문에 있던 동작을 인터페이스의 가상 메서드로 만든다.    class HeroineState    {    public:      static JumpingState jumping;      virtual ~HeroineState() {}      virtual void handleInput(Heroine&amp; heroine, Input input{}      virtual void update(Heroine&amp; heroine) {}    };📌상태별 클래스 정의각 상태별로 인터페이스를 구현하는 클래스도 정의한다. 상태의 메서드에서 해당 상태가 되었을 때 어떤 행동을 할지 정의한다.    class DuckingState : public HeroineState    {    public:      DuckingState()      : chargeTime_(0)      {}      virtual void handleInput(Heroine&amp; heroine, Input input) {        if (input == RELEASE_DOWN)        {          // Change to standing state...          heroine.setGraphics(IMAGE_STAND);        }      }      virtual void update(Heroine&amp; heroine) {        chargeTime_++;        if (chargeTime_ &gt; MAX_CHARGE)        {          heroine.superBomb();        }      }    private:      int chargeTime_;    };  }📌동작을 상태에 위임하기자신의 현재 상태 객체 포인터를 추가하여 다중 선택문을 제거하고 상태 객체에 위임한다.이제 상태를 바꾸는 것은 포인터에 상태 객체를 할당하기만하면 된다.class Heroine    {    public:      virtual void handleInput(Input input)      {        state_-&gt;handleInput(*this, input);      }            virtual void update()      {        state_-&gt;update(*this);      }    private:      HeroineState* state_;    };상태 객체는 어디에 위치해야할까?  정적 인스턴스를 만들어 원하는 위치 또는 상위 상태 클래스에 두는 것이 좋다.🧐 상태 패턴의 장단점✔️장점  단일 책임 원칙을 따라 특정 상태와 관련된 코드를 별도의 클래스로 구성한다.  개방/폐쇄 원칙을 따라 기존 상태 클래스나 컨텍스트를 변경하지 않고 새 상태를 도입한다.  부피가 큰 상태 머신 조건을 제거하여 컨텍스트의 코드를 단순화한다.❌단점  몇 가지 상태만 있거나 상태가 거의 변경되지 않는 경우 상태 패턴을 적용하는 것이 과도할 수 있다.😟FSM의 단점  엄격하게 제한된 구조만을 강제하 미리 정해둔 상태 하나와 하드 코딩되어있는 전이만이 존재한다.따라서 여러 상태가 같이 동작하는 복잡한 상태에 대해 적용이 어렵다.병행 상태 기계  상태 기계를 둘로 나누어 사용하는 방법이다.예를 들어, 무기를 장착하는 캐릭터가 있다면 무엇을 들고 있는지 무엇을 하는지 에따라 두가지 상태가 존재하게된다.    //two states example    class Heroine    {      virtual void handleInput(Input input);    private:      HeroineState* state_;     //two states      HeroineState* equipment_;    };    //handle two inputs    void Heroine::handleInput(Input input)    {      state_-&gt;handleInput(*this, input);      equipment_-&gt;handleInput(*this, input);    }  }각각의 상태 기계는 입력에 따라 동작을 실행하고 독립적으로 상태를 변경할 수 있다. 이 방식은 두 상태기계가 서로 전혀 연관이 없는 경우 쓰인다.계층형 상태 기계어떤 상태는 상위 상태를 가질 수 있고, 상위 상태를 가지면 자신은 하위 상태가 된다.이벤트가 들어올때 하위 상태에서 처리하지 않으면 상위 상태로 넘어간다.주 클래스에 상태를 하나만 두지 않고 스택을 만들어 명시적으로 현재 상태의 상위 상태를 만들 수도 있다.📌 Other &amp; Referencerefactoring guru: 상태 패턴"
+  },
+  
+  {
+    "title": "chapter 7 상태 패턴 (1)",
+    "url": "/posts/07State01/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, state",
+    "date": "2022-10-03 20:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 상태 (State)  객체 내부 상태에 따라 스스토 행동을 변경할 수 있게 허가하는 패턴으로, 이렇게 하면 객체는 마치 자신의 클래스를 바꾸는 것 처럼 보인다.  GoF 디자인 패턴 395p상태 패턴의 필요성어떤 캐릭터에 대해 이동로직을 아래와 같이 구현한다 해보자// https://github.com/munificent/game-programming-patterns/blob/master/code/cpp/state.h// 각 상태별로 복잡한 예외처리가 필요하다.    void Heroine::handleInput(Input input)    {      if (input == PRESS_B)      {        if (!isJumping_ &amp;&amp; !isDucking_)        {          // Jump...        }      }      else if (input == PRESS_DOWN)      {        if (!isJumping_)        {          isDucking_ = true;          setGraphics(IMAGE_DUCK);        }        else        {          isJumping_ = false;          setGraphics(IMAGE_DIVE);        }      }      else if (input == RELEASE_DOWN)      {        if (isDucking_)        {          // Stand...        }      }    }  }위와 같이 구현하게 된다면 상태에 맞는 동작을 실행하기위해 여러 플래그로 확인이 필요하고 상태가 늘어남에 따라 더 많은 예외처리가 필요하다.🛠️FSM (finite-state machine, 유한 상태 기계)상태 기계를 그린 플로우 차트FSM의 정의  가질 수 있는 상태가 한정된다.  한번에 한가지의 상태만 될 수 있다.  입력이나 이벤트가 기계에 전달된다.  각 상태에는 입력에 따라 다음 상태로 바뀌는 전이가 있다.📌열거형과 다중 선택문으로 만드는 FSM여러 변수 중 하나만 참일 때가 많다면 열거형Enum을 사용하는 것이 좋다.    enum State    {      STATE_STANDING,      STATE_JUMPING,      STATE_DUCKING,      STATE_DIVING    };아래와 같이 switch case문으로 상태에따라 분기가 가능하도록 한다.    //^state-switch    void Heroine::handleInput(Input input)    {      switch (state_)      {        case STATE_STANDING:          if (input == PRESS_B)          {            state_ = STATE_JUMPING;            yVelocity_ = JUMP_VELOCITY;            setGraphics(IMAGE_JUMP);          }          else if (input == PRESS_DOWN)          {            state_ = STATE_DUCKING;            setGraphics(IMAGE_DUCK);          }          break;        case STATE_JUMPING:          if (input == PRESS_DOWN)          {            state_ = STATE_DIVING;            setGraphics(IMAGE_DIVE);          }          break;                  case STATE_DUCKING:          if (input == RELEASE_DOWN)          {            state_ = STATE_STANDING;            setGraphics(IMAGE_STAND);          }          break;          //^omit        case STATE_DIVING:          break;          //^omit      }    }🗳️ 상태 패턴📌상태 인터페이스 정의상태 인터페이스는 상태에 의존하는 코드 즉, 다중 선택문에 있던 동작을 인터페이스의 가상 메서드로 만든다.    class HeroineState    {    public:      static JumpingState jumping;      virtual ~HeroineState() {}      virtual void handleInput(Heroine&amp; heroine, Input input{}      virtual void update(Heroine&amp; heroine) {}    };📌상태별 클래스 정의각 상태별로 인터페이스를 구현하는 클래스도 정의한다. 상태의 메서드에서 해당 상태가 되었을 때 어떤 행동을 할지 정의한다.    class DuckingState : public HeroineState    {    public:      DuckingState()      : chargeTime_(0)      {}      virtual void handleInput(Heroine&amp; heroine, Input input) {        if (input == RELEASE_DOWN)        {          // Change to standing state...          heroine.setGraphics(IMAGE_STAND);        }      }      virtual void update(Heroine&amp; heroine) {        chargeTime_++;        if (chargeTime_ &gt; MAX_CHARGE)        {          heroine.superBomb();        }      }    private:      int chargeTime_;    };  }📌동작을 상태에 위임하기자신의 현재 상태 객체 포인터를 추가하여 다중 선택문을 제거하고 상태 객체에 위임한다.이제 상태를 바꾸는 것은 포인터에 상태 객체를 할당하기만하면 된다.class Heroine    {    public:      virtual void handleInput(Input input)      {        state_-&gt;handleInput(*this, input);      }            virtual void update()      {        state_-&gt;update(*this);      }    private:      HeroineState* state_;    };상태 객체는 어디에 위치해야할까?  정적 인스턴스를 만들어 원하는 위치 또는 상위 상태 클래스에 두는 것이 좋다.🧐 상태 패턴의 장단점✔️장점  단일 책임 원칙을 따라 특정 상태와 관련된 코드를 별도의 클래스로 구성한다.  개방/폐쇄 원칙을 따라 기존 상태 클래스나 컨텍스트를 변경하지 않고 새 상태를 도입한다.  부피가 큰 상태 머신 조건을 제거하여 컨텍스트의 코드를 단순화한다.❌단점  몇 가지 상태만 있거나 상태가 거의 변경되지 않는 경우 상태 패턴을 적용하는 것이 과도할 수 있다.😟FSM의 단점  엄격하게 제한된 구조만을 강제하여 미리 정해둔 상태 하나와 하드 코딩되어있는 전이만이 존재한다.따라서 여러 상태가 같이 동작하는 복잡한 상태에 대해 적용이 어렵다.병행 상태 기계  상태 기계를 둘로 나누어 사용하는 방법이다.예를 들어, 무기를 장착하는 캐릭터가 있다면 무엇을 들고 있는지 무엇을 하는지 에따라 두가지 상태가 존재하게된다.    //two states example    class Heroine    {      virtual void handleInput(Input input);    private:      HeroineState* state_;     //two states      HeroineState* equipment_;    };    //handle two inputs    void Heroine::handleInput(Input input)    {      state_-&gt;handleInput(*this, input);      equipment_-&gt;handleInput(*this, input);    }  }각각의 상태 기계는 입력에 따라 동작을 실행하고 독립적으로 상태를 변경할 수 있다. 이 방식은 두 상태기계가 서로 전혀 연관이 없는 경우 쓰인다.계층형 상태 기계어떤 상태는 상위 상태를 가질 수 있고, 상위 상태를 가지면 자신은 하위 상태가 된다.이벤트가 들어올때 하위 상태에서 처리하지 않으면 상위 상태로 넘어간다.주 클래스에 상태를 하나만 두지 않고 스택을 만들어 명시적으로 현재 상태의 상위 상태를 만들 수도 있다.📌 Other &amp; Referencerefactoring guru: 상태 패턴"
+  },
+  
+  {
+    "title": "ThreeMatch 개발기록 01",
+    "url": "/posts/ThreeMatchDev01/",
+    "categories": "Unity2D, ThreeMatch",
+    "tags": "Atan2, Mathf, Mathf.Rad2Deg",
+    "date": "2022-09-29 12:47:06 +0900",
+    
+
+
+
+
+
+    "snippet": "📐 두 위치값 사이 각도 구하기    private void CalculateAngle()    {        var swipeAngle = Mathf.Atan2(secondPos.y - firstPos.y, secondPos.x - firstPos.x) * Mathf.Rad2Deg;        Debug.Log(swipeAngle);    }두 위치 값을 통해 |x2-x1| |y2 - y1| 거리 값을 구할 수 있으므로 탄젠트를 사용하여 두 위치값 사이 각도를 구할 수 있다.📐 Mathf.Atan2탄젠트를 적용했을 때 지정된 두 숫자의 몫이 나오는 각도를 반환한다.\tpublic static float Atan2 (float y, float x);  반환 값  Single      -π ≤θ ≤π 범위의 각도 θ(라디안) 및 tan(θ) = y / x입니다(여기서 x, y는 데카르트 평면 상의 지점임). 다음 사항이 적용됩니다.                  (x, y)가 1사분면 안에 있으면 0 &lt; θ &lt; π/2입니다. (0°~90°)                    (x, y)가 2사분면 안에 있으면 π/2 &lt; θ ≤ π입니다. (90°~180°)                    (x, y)가 3사분면 안에 있으면 -π &lt; θ &lt; -π/2입니다. (0°~-90°)                    (x, y)가 4사분면 안에 있으면 -π/2 &lt; θ &lt; 0입니다. (-90°~-180°)                  점이 사분면의 경계에 있는 경우 반환 값은 다음과 같습니다.                  y가 0이고 x가 음수가 아니면 θ = 0입니다.                    y가 0이고 x가 음수이면 θ = π입니다.                    y가 양수이고 x가 0이면 θ = π/2입니다.                    y가 음수이고 x가 0이면 θ = -π/2입니다.                    y가 0이고 x가 0이면 θ = 0입니다.            x 또는 y가 NaN이거나, x 및 y가 PositiveInfinity 또는 NegativeInfinity이면 이 메서드는 NaN을 반환합니다.호도법과 라디안호 AB 의 길이는 중심각에 비례한다. 따라서 부채꼴 호의 중심각 a는 반지름에 상관없이 항상 일정한 값을 가진다.Π 라디안 = 180° 이며 1라디안은 180/Π , 1° = Π/180 라디안이다.📐 Mathf.Rad2Deg라디안을 각도(degree/deg)로 변경하기 위한 상수로 360 / (PI * 2) 값을 가진다.📌 Other &amp; Reference호도법, 라디안MathF.Atan2(Single, Single) 메서드"
+  },
+  
+  {
+    "title": "chapter 6 싱글톤 패턴",
+    "url": "/posts/06Singleton/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, singleton",
+    "date": "2022-09-28 18:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 싱글턴 패턴 (Singleton)  오직 한개의 클래스 인스터스만을 가지도록 보장하고 이에 대한 전역적인 접근점을 제공한다. GoF 디자인 패턴 81p한가지 스포너가 한 가지 몬스터 인스턴스만 만드는 경우 만약 몬스터 클래스마다 스포너 클래스를 만든다고하면 스포너 클래스의 상속구조가 몬스터 클래스의 상속 구조와 동일할 것이다.이와 같은 문제는 프로토타입 패턴으로 해결할 수 있다. 핵심은 어떤 객체가 자기와 비슷한 객체를 스폰할 수 있다는 점이다,🚀싱글턴 패턴  오직 한  개의 클래스 인스턴스만 가지도록 보장한다.          인스턴스가 여러 개면 외부와 상호작용하며 제대로 작동되지 않는 경우가 생길 수 있다.      Ex) 파일 시스템 API를 래핑하는 클래스                  해당 클래스는 파일작업이 동시에 일어 날 수 있으므로 비동기적으로 동작한다.          래퍼 클래스가 두 작업을 다 파악해서 서로 간섭하지 못하게 해야한다.          아무데서나 파일 시스템 클래스 인스턴스를 만들 수 있다면 다른 인스턴스에서 어떤 작업을 진행중인지 알 수 없게 된다.                      전역 접근점을 제공          싱글턴은 그 인스턴스를 전역에서 접근할 수 있는 메서드를 제공한다. 이를통해서 누구든지 어디서든지 인스턴스에 접근할 수 있다.          Class FileSystem{  \tpublic FileSystem&amp; instance(){  \t\t// 게으른 초기화 (lazy initialization) 호출시에 인스턴스가 존재하지 않는다면 생성하고 반환한다.  \t\tif(instance_ == NULL)  \t\t{  \t\t\tinstance_ = new FileSystem();  \t\t\treturn *instance_;  \t\t}  \t}  \tprivate:  \tFileSystem() {}  \tstatic FileSystem* instance_;  }              lazy initialization : 객체 생성, 값 계산, 또는 일부 기타 비용이 많이 드는 과정을 처음 필요한 시점까지 지연시키는 기법 즉 인스턴스를 호출하는 순간에 초기화를 해주는 기법이다.      생성자가 private라 밖에서는 생성불가      public 의 instance() 정적 메서드는 코드 어디에서나 접근 가능      🤔 싱글턴을 왜 사용하는가?  한번도 사용하지 않는 다면 아예 인스턴스를 생성하지 않는다.메모리와 CPU사용량을 줄일 수 있음  런타임에 초기화된다.싱글턴 대신 정적 클래스를 사용할 수도 있지만 정적 맴버 변수는 자동 초기화되는 문제가 있음정적 변수 초기화 순서도 컴파일러에서 보장해주지 않기 때문에 한 정적 변수가 다른 정적 변수에 안전하게 의존적일 수 없음순환 의존만 없다면 초기화할때 다른 싱글턴을 참조해도 괜찮다.  싱글턴을 상속할 수 있다.싱글턴의 상속은 잘 사용되지않는 방법이지만 강력하다.파일 시스쳄 레퍼가 크로스 플랫폼을 지원해아 한다면 추상 인터페이스를 만든뒤 플랫폼마다 구체 클래스를 만들면 된다.Class FileSystem{\tpublic:\t\tvirtual ~FileSystem(){}\t\tvirtual char* readFile(char* path) = 0;\t\tvirtual void writeFile(char* path, char* contents) = 0;\tprotected:FileSystem&amp; FileSystem::instance() {#if PLATFROM == PLAYSTATION3    static FileSystem* instance = new PS3FileSystem();#elif PLATFORM == WII    static FileSystem* instance = new WiiFileSystem();#endif    return *instance;\t}}컴파일러가 시스템에 맞는 파일 시스템 객체를 만들 수 있게된다.😥싱글턴의 문제점길게 놓고 보면 비용을 지불하게 됨  알고보니 전역 변수인 경우          설계와 유지보수성이 병목      하드웨어의 한계보다 생산성 한계 때문에      +) 전역변수의 나쁜점  전역변수는 코드를 이해하기 어렵게 한다.  전역변수는 커플링을 조장한다.  전역변수는 멀티스레딩 같은 동시성 프로그래밍에 알맞지 않다.무엇인가를 전역으로 만들면 스레드가 보고 수정할 수 있는 메모리 영역이 생기는 셈이다. 다른 스레드가 전역 데이터에 무슨 작업을 하는지 모르는 때도 있다. 이러다보면 교착상태, 경쟁 상태에 빠지게된다.🗃️ 멀티 스레딩 환경에서 싱글톤 사용멀티스레드 환경에서의 싱글턴멀티 스레드 환경에서 서로 다른 스레드에서 동시에 참조하는 경우 여러 인스턴스가 생성되며 싱글턴에 위배될 수 있다. 싱글톤 사용 시 문제점을 해결할 방안은 아래와 같다.      인스턴스를 이른 초기화를 진행한다.        getInstance 메서드를 동기화한다. (synchronized 키워드 사용)        DCL 기법을 사용한다. (lock 키워드 사용)          lock 문은 지정된 개체에 대한 상호 배제 잠금을 획득하여 명령문 블록을 실행한 다음, 잠금을 해제한다.      😟 싱글턴은 문제가 하나뿐일 때도 두 가지 문제를 풀려 든다.📌 게으른 초기화는 제어할 수 없다.게임의 경우 시스템을 초기화하는 경우 메모리 할당, 리소스 로딩 등 할 일이 많다 보니 시간이 꽤 걸릴 수 있다. 처음 소리를 재생할 때 게으른 초기화를 한다면 프레임이 떨어지고 게임이 버벅일 수 있다.마찬가지로 메모리 단편화를 막기 위해 메모리 할당을 세밀히 제어하는 것이 좋다.📌 힙 어디에 메모리를 할당할 지 제어할 수 있도록 적절한 초기화 시점을 찾아야한다.정적 인스턴스를 사용하면 게으른 초기화 문제를 해결할 수 있음 하지만 다형성을 사용할 수는 없다.클래스는 정적 객체 초기화 시점에 생성되므로 인스터스가 필요 없어도 메모리를 해제할 수 없다.🧐대안  클래스가 꼭 필요한가?가능하다면 도우미 클래스에 있던 작동 코드를 모두 원래 클래스로 옮기자. 객체가 스스로를 챙기게 하는게 바로 OOP이다.  오직한 개의 클래스 인스턴스만 갖도록 보장하기전역 접근 없이 클래스 인스턴스만 한 개로 보장할 수 있는 방법static  bool instantiated_;를 선언해서 생성되어 있는 지 판단이때는 런타임에서 인스턴스 개수를 확인 한다는 점이 단점이다.  인스턴스에 쉽게 접근하기쉬운 접근성은 싱글턴을 선택하는 가장 큰 이유지만 원치 않는 곳에도 노출되는 단점을 가짐객체에서 접근 가능한 다른 방법      넘겨주기    함수의 인자로 넘겨주자        상위 클래스로부터 얻기    상위 객체에 protected로 접근 가능하게        이미 전역인 객체로부터 얻기    전역 클래스 개수줄이기 → 다만 더 많은 코드가 한 클래스와커플링된다는 단점이 있다.        서비스 중개자로부터 얻기    여러 객체에 대한 전역 접근을 제공하는 클래스를 따로 정의한다. (서비스 중계자 패턴 사용)  😉싱글턴에 남은 것싱글턴을 대체하는 여러 패턴  하위 클래스 샌드박스 패턴 (12장) - 클래스가 같은 인스턴스들이 공용 상태를 전역으로 만들지 않고도 접근할 수 있는 방법을 제공한다.  서비스 중개자 패턴 (16장) - 객체를 전역으로 접근할 수 있게 하되, 객체를 훨씬 유연하게 설정할 수 있는 방법을 제공한다.📌 Other &amp; Reference멀티스레드 환경에서의 싱글턴 포스팅디자인 패턴 다시 보기: 경량 패턴refactoring guru"
+  },
+  
+  {
+    "title": "chapter 4 관찰자 패턴",
+    "url": "/posts/04Observer/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, Observer",
+    "date": "2022-09-28 05:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 관찰자 패턴 (Observer)  객체 사이에 일 대다의 의존 관계를 정의해두어, 어떤 객체의 상태가 변할 때 그 객체에 의존성을 가진 다른 객체들이 그 변화를 통지 받고 자동으로 업데이트될 수 있게 만듭니다.(GoF의 디자인 패턴 382p)주로 사용되는 MVC구조의 기반이 이 관찰자 패턴이다.C#에서는 관찰자 패턴을 Event로 제공한다.      Observer Class 예시    옵저버 클래스는 인터페이스로 구현된다.이 인터페이스를 구현만 하면 어떤 클래스든 관찰자가 될 수 있다.    class Observer{public: virtual ~Observae() {}// onNotifity은 대부분 알림을 보내는 객체와 데이터를 매겨변수로 가진다.// 해당 예제의 Event의 경우 Enum 값을 사용한다.virtual void onNotifity(const Entity&amp; entity, Event event) = 0;}        업적 클래스는 어떤 이벤트를 받고 업적 달성을 처리하므로 위 옵저버 인터페이스를 구현하여 각 이벤트마다 처리를 진행한다.    class Achievements : pubic Observer{public :     virtual void onNotify(const Entity&amp; entity, Event event)    {        switch(event)        {            case EVENT_ENTITY_FELL:                if(entity.isHero()&amp;&amp;heroIsOnBridge_)                {                    unlock(EVENT_ENTITY_FELL);                }                break;                //...        }    }private:    void unlock(Achievement achievement)    {        // 업적을 해제한다.    }    bool heroIsOnBridge_;}      알림 매서드는 관찰 당하는 객체가 호출하며 알람을 기다리는 관찰자 목록을 들고 있는다.이때, 관찰자 목록을 밖에서 변경할 수 있도록 API를 public으로 열어 둔다. 따라서 누가 알림을 받을 것인지 제어가 가능하다.//관찰 당하는 대상 클래스 관찰자를 배열로 들고 있는다.class Subject { private:  Observer* observers_[MAX_OBSERVERS];   int numObservers_;    public:  void addObserver(Observer* observer) {    // 배열에 추가한다...  }  void removeObserver(Observer* observer) {    // 배열에서 제거한다...  }  // 그 외...};  관찰자 시스템과 이벤트 시스템의 차이점 ‘관찰자’ 시스템과 ‘이벤트’ 시스템의 차이다. 관찰자 시스템에서는 뭔가 관심 있는 일을 하는 객체를 관찰하지만, 이벤트 시스템에서는 관심 있는 일 자체를 나타내는 객체를 관찰한다.🕑 왜사용되는가?      대상은 관찰자와 상호작용하지만, 서로 커플링 되어 있지 않다.        대상의 관찰자들을 목록으로 관리해서 관찰자들끼리 서로 커플링이 되지 않는다.        관찰자를 여러개 등록할 수 있어 각자 독립적으로 다뤄지는 것을 보장할 수 있다.  🤔관찰자 패턴 사용시 문제가 될 수 있는 점들과 해결방안      관찰자 패턴은 느리다?일부는 알람마다 동적할당과 큐잉이 있어 실제로 느릴 수도 있다.하지만 예제의 경우, 인터페이스를 통해 동기적으로 메서드를 간접호출할 뿐 메시징 용 객체를 할당하지 않고 큐잉도 하지 않는다        관찰자 패턴은 동기적이다.대상이 관찰자 메서드를 직접 호출하기 때문에 모든 관찰자가 알림 메서드를 반환하기 전에는 다음 작업을 진행할 수 없다.관찰자 중 하나라도 느리면 대상이 블록될수도 있다.  따라서 오래걸리는 작업이 있다면 메인 스레드가 아닌 다른 스레드에 작업을 넘기거나 작업 큐를 활용하는 것이 좋다.관찰자가 멀티스레드와 락과 함께 사용된다면 교착상태를 주의해야한다.  관찰자 등록 및 헤제시의 동적할당대상이 들고 있는 관찰자의 포인터 리스트를 연결리스트로 변경하면 동적할당 문제를 해결할 수 있다.대상 클래스에 관찰자 배열 대신 관찰자 연결 리스트의 첫째 노드를 가리키는 포인터로 설정한다.class Subject {  Subject() : head_(NULL) {}private:  Observer* head_;};관찰자에는 연결 리스트의 다음 관찰자를 가리키는 포인터를 추가한다.class Observer {  friend class Subject;public:  Observer() : next_(NULL) {}private:  Observer* next_;};새로운 관찰자를 연결 리스트에 추가하기만 하면 대상에 등록할 수 있다.void Subject::addObserver(Observer* observer) {   observer-&gt;next_ = head_;  head_ = observer; // 앞쪽에 추가하는 방식}관찰자를 앞에서부터 추가하면 구현이 간단하지만, 전체 관찰자에 알림을 보낼 때는 맨 나중에 추가된 관찰자부터 맨 먼저 알림을 받는다는 부작용이 있다. 관찰자를 A, B, C 순서대로 추가했다면, C, B, A 순서대로 알림을 받게 된다.원칙적으로 같은 대상을 관찰하는 관찰자끼리는 알림 순서로 인한 의존 관계가 없게 만들어야 한다. 하지만 순서 때문에 문제가 있다면 관찰자들 사이에 미묘한 커플링 이 있다는 얘기이므로, 나중에 문제가 될 소지가 크다.void Subject::removeObserver(Observer* observer) {   if (head_ == observer) { // 첫번째 노드삭제시의 예외처리, 포인터의 포인터를 사용하면 필요없음    head_ = observer-&gt;next_;     observer-&gt;next_ = NULL;     return;  }  Observer* current = head_;   while (current != NULL) { //  단순 연결 리스트라서 노드를 제거하려면 연결 리스트를 순회해야 하지만 이중 연결 리스트라면 N(1)로 가능하다.    if(current-&gt;next_ == observer) {       current-&gt;next_ = observer-&gt;next_;       observer-&gt;next_ = NULL;      return;    }    current = current-&gt;next_;  }}아래는 예외처리없이 포인터의 포인터를 사용하는 c++ 예제이다.ch4. pointer of pointer.cpp//포인터의 포인터를 사용하여 관찰자를 제거하는 방식void Subject::removeObserver(Observer* observer) {  Observer** current = &amp;head_; // 현재 헤드 주소값  while (*current != NULL) {    if (*current == observer) {//제거할 관찰자를 찾았다면      *current = (*current)-&gt;next_;      observer-&gt;next_ = NULL;      return;    }    current = &amp;(*current)-&gt;next_;  }}) 알람은 모든 노드를 순회하며 알람을 보내면 된다.void Subject::notify(const Entity&amp; entity, Event event) {   Observer* observer = head_;  while (observer != NULL) {    observer-&gt;onNotify(entity, event);     observer = observer-&gt;next_;  }}위와 같이 동적 메모리 할당없이 구현할 수 있으나 관찰자 객체가 그 자체를 리스트 노드로 활용하기 때문에, 관찰자는 하나의 대상 관찰자 목록에만 등록할 수 있다. 는 단점이 존재한다.노드가 데이터를 들고 있는 방식대상이 관찰자 연결 리스트를 들고 있다. 다만, 이 연결 리스트의 노드는 관찰자 객체가 아니다. 대신 따로 간단한 ‘노드’를 만들어, 관찰자와 다음 노드를 포인터로 가리키게 한다.이와 같이 구현하면 같은 관찰자를 여러 노드에서 가리킬 수 있다. 같은 관찰자를 여러 노드에서 가리킬 수 있다는 것은, 같은 관찰자를 동시에 여러 대상에 추가할 수 있다는 뜻이다. 다시 여러 대상을 한 번에 관찰할 수 있게 된 것이다.🧐 추가적인 문제점대상과 관찰자의 제거  관찰자는 제거하기가 더 어렵다. 대상이 관찰자를 포인터로 알고 있기 때문이다. 해결 방법이 몇 가지 있다. 가장 쉬운 방법은 관찰자가 삭제될 때 스스로를 등록 취소하는 것이다. 관찰자는 보통 관찰 중인 대상을 알고 있으므로 소멸자에서 대상의 removeObserver( )만 호출하면 된다. (흔히 그렇듯이, 뭔가를 하는 건 어렵지 않다. 할 일을 기억하기가 어렵다.)C# 에서 아이템 관련해서 구현을 진행했을 때 비슷한 이슈가 있었었다. 관찰자인 아이템은 몇초 뒤 자동으로 사라지는데 없어진 이벤트를 발생시키면서 NullReferenceException이 발생했다.Invoke 시 ? 로 Null 체크를 하는 것도 좋지만 등록을 해제하는 것도 잊지 않고 구현해두어야 한다.  관찰자 제거 시 자동 제거 방식실수를 막는 더 안전한 방법은 관찰자가 제거될 때 자동으로 모든 대상으로부터 등록 취소하게 만드는 것이다. 상위 관찰자 클래스에 등록 취소 코드를 구현해놓으면 이를 상속받는 모든 클래스는 등록 취소에 대해 더 이상 고민하지 않아도 된다. 다만 두 방법 모두 관찰자가 자기가 관찰 중인 대상들의 목록을 관리해야 하기 때문에 상호참조가 생겨 복잡성이 늘어나는 단점이 있다.🧐 사라진 리스너 문제 (lapsed listener problem)  The lapsed listener problem is a common source of memory leaks for object-oriented programming languages, among the most common ones for garbage collected languages.사라진 리스너인스턴스가 GC로 수거되지 않는 경우 재 실행된다면 반복해서 이벤트가 등록될 수 있고 이 모든 이벤트에 대해 알람을 보내게된다.즉, 대상이 리스너 레퍼런스를 유지하기 때문에, 메모리에 남아 있는 좀비 객체가 생길 수 있으므로 등록 취소를 주의해야 한다.📌 Other &amp; Reference디자인 패턴 다시 보기: 관찰자 패턴"
+  },
+  
+  {
+    "title": "chapter 5 프로토타입 패턴 (2)",
+    "url": "/posts/05Prototype02/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, prototype",
+    "date": "2022-09-27 05:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 프로토타입 (Prototype) 언어의 패러다임🧐 객체지향 프로그래밍  OOP(객체 지향 프로그래밍,Object-Oriented Programming)은 데이터와 코드를 묶어주는 객체를 직접 정의 할 수 있다. (게임프로그래밍 패턴 93p)OOP의 가장 큰 특징은 상태와 동작을 함께 묶는 것이다.🕵️ 셀프셀프는 클래스가 존재하지 않는 객체지향 기반의 프로토타입 언어이다.기존 클래스 기반 언어의 구별객체의 상태를 알기 위해서는 해당 인스턴스 내부를 확인해야한다. 즉, 상태(필드)는 인스턴스에 들어있다.메서드를 호출할 때는 인스턴스의 클래스에서 찾는다. 즉, 동작은 클래스에 있다. 이런 점이 항상 한 단계를 거쳐서 메서드를 호출한다는 점에서 상태(필드)와 메서드가 다르다.셀프의 구별셀프는 이런 구별 자체가 없이 무엇이든 개게에서 바로 찾을 수 있다. 인스턴스가 상태와 동작을 모두 가질 수 있다.셀프는 크래스없이 코드를 재사용하고 중복코드를 줄이기 위해 객체의 위임 개념이 있다.위임을 받으면 어떤 필드나 메서드에 접근 및 호출할 때 먼저 해당 객체에 존재하는 지 찾아보고 없다면 상위 객체에서 찾아본다.이때 상위 객체는 그냥 다른 객체의 래퍼런스일 뿐이다.객체 생성시 클래스 와 셀프를 다른 점  클래스 클래스는 자기 자신의 인스턴스 생성기이다.      셀프 셀프에서는 모든 객체가 프로토타입 패턴을 지원한다. 즉, 복제로 인스턴스를 생성하면된다.         1. 객체 하나를 원하는 상태로 만들어 필드와 메서드를 채워 넣는다.     2. 이 객체를 원하는 만큼 복사한다.       📑 데이터 모델링 프로토타입데이터 개체에 중복이 많다면 프로토타입 필드를 사용하는 것이  좋다.JSON 데이터에서 프로토타입 활용{  \"name\": \"goblin grunt\",  \"minHealth\": 20,  \"maxHealth\": 30,  \"resists\": [\"cold\", \"poison\"],  \"weaknesses\": [\"fire\", \"light\"]}{  \"name\": \"goblin wizard\",  \"minHealth\": 20,  \"maxHealth\": 30,  \"resists\": [\"cold\", \"poison\"],  \"weaknesses\": [\"fire\", \"light\"],  \"spells\": [\"fire ball\", \"lightning bolt\"]}{  \"name\": \"goblin archer\",  \"minHealth\": 20,  \"maxHealth\": 30,  \"resists\": [\"cold\", \"poison\"],  \"weaknesses\": [\"fire\", \"light\"],  \"attacks\": [\"short bow\"]}위와 같이 데이터를 사용하면 minHealth,maxHealth 등 중복되는 부분이 여럿 존재한다.{  \"name\": \"goblin grunt\",  \"minHealth\": 20,  \"maxHealth\": 30,  \"resists\": [\"cold\", \"poison\"],  \"weaknesses\": [\"fire\", \"light\"]}{  \"name\": \"goblin wizard\",  \"prototype\": \"goblin grunt\",   \"spells\": [\"fire ball\", \"lightning bolt\"]}{  \"name\": \"goblin archer\",  \"prototype\": \"goblin grunt\",  \"attacks\": [\"short bow\"]}이와 같이 데이터 모델에 프로토타입 필드를 통해 위임을 추가하면 중복을 많이 제거할 수 있다는 장점이 있다.추상 프로토타입의 불필요위 예제에서 기본 고블린과 같은 추상 프로토타입을 따로 만들지 않고 기본적인 자료형을 하나 골라 다른 객체에 위임하도록 한 모습을 볼 수 있다.이점이 바로 프로토타입 기반 시스템에서 어떤 객체든 복제로 사용할 수 있음에 대한 예시이다.굳이 새로운 추상 프로토타입을 만들 필요가 없다.📌 Other &amp; Referencegame-programming-patterns github - prototype "
+  },
+  
+  {
+    "title": "chapter 5 프로토타입 패턴 (1)",
+    "url": "/posts/05Prototype01/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, prototype",
+    "date": "2022-09-27 05:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 프로토타입 (Prototype)  원형이 되는 인스턴스를 사용하여 생성할 객체의 종류를 명시하고, 이렇게 만든 견본을 복사해서 새로운 객체를 생성합니다. GoF 디자인 패턴 69p한가지 스포너가 한 가지 몬스터 인스턴스만 만드는 경우 만약 몬스터 클래스마다 스포너 클래스를 만든다고하면 스포너 클래스의 상속구조가 몬스터 클래스의 상속 구조와 동일할 것이다.이와 같은 문제는 프로토타입 패턴으로 해결할 수 있다. 핵심은 어떤 객체가 자기와 비슷한 객체를 스폰할 수 있다는 점이다.예를 들어, 어떤 몬스터 객체든지 자신과 비슷한 몬스터 객체를 만드는 원형객체로 사용할 수 있다.Monster의 하위 클래스에서는 자신의 자료형과 상태가 같은 새로운 객체를 반환하도록 clone()을 구현한다.🛠️ .Net  의 ICloneable 인터페이스  ICloneable는 복제(클래스에서 기존 인스턴스와 같은 값을 갖는 새 인스턴스를 만듦)를 지원합니다.public  interface  ICloneable구현자 참고인터페이스를  ICloneable 사용하려면 메서드 구현의 Clone()에서 현재 개체 인스턴스의 복사본을 반환해야 합니다.이 복제 작업에서 심층 복사, 단순 복사본 또는 그 사이에 있는 항목을 수행할지 여부를 지정하지 않습니다. 또한 원래 인스턴스의 모든 속성 값을 새 인스턴스에 복사할 필요가 없습니다.  따라서, 개체를 어떤 식으로 복사할 지는 구현하는 사람에게 달렸다.📌 유니티 ICloneable 예제using System;using UnityEngine;//ICloneable를 상속받는다.public class Skeleton : Monster, ICloneable{    //...    public object Clone()    {        // 이곳에서 깊은 복사에 대한 로직을 넣으면 깊은 복사를 수행해서 반환할 수 있다.        return Instantiate(this);    }}📃 MemberwiseClone📌 .Net MemberwiseClone예제Person 클래스예제에서 개체에 대해 ShallowCopy 단순 복사 작업을 수행하기 위한 MemberwiseClone 메서드와 개체에 DeepCopy 심층 복사 작업을 수행하는 메서드를 볼 수 있다.using System;public class IdInfo{    public int IdNumber;    public IdInfo(int IdNumber)    {        this.IdNumber = IdNumber;    }}public class Person{    public int Age;    public string Name;    public IdInfo IdInfo;    public Person ShallowCopy() // MemberwiseClone를 통한 얕은 복사    {       return (Person) this.MemberwiseClone();    }    public Person DeepCopy() // 깊은 복사    {       Person other = (Person) this.MemberwiseClone();       other.IdInfo = new IdInfo(IdInfo.IdNumber);       other.Name = String.Copy(Name);       return other;    }}📌 얕은 복사와 깊은 복사 결과 비교public class Example{    public static void Main()    {        // Person의 인스턴스를 만들고 해당 필드에 값을 할당한다.        Person p1 = new Person();        p1.Age = 42;        p1.Name = \"Sam\";        p1.IdInfo = new IdInfo(6565);        // p2 는 얕은 복사를 진행한다.        Person p2 = p1.ShallowCopy();        Console.WriteLine(\"Original values of p1 and p2:\");        Console.WriteLine(\"   p1 instance values: \");        DisplayValues(p1);        Console.WriteLine(\"   p2 instance values:\");        DisplayValues(p2);        // p1 속성 값을 변경하고 p1 및 p2 값을 표시한다.        p1.Age = 32;        p1.Name = \"Frank\";        p1.IdInfo.IdNumber = 7878;        Console.WriteLine(\"\\nValues of p1 and p2 after changes to p1:\");        Console.WriteLine(\"   p1 instance values: \");        DisplayValues(p1);        Console.WriteLine(\"   p2 instance values:\");        DisplayValues(p2);        // p3 는 p1을 깊은 복사한다.        Person p3 = p1.DeepCopy();        // p1 클래스의 멤버를 다른 값으로 변경하고 전체 복사본을 확인 한다.        p1.Name = \"George\";        p1.Age = 39;        p1.IdInfo.IdNumber = 8641;        Console.WriteLine(\"\\nValues of p1 and p3 after changes to p1:\");        Console.WriteLine(\"   p1 instance values: \");        DisplayValues(p1);        Console.WriteLine(\"   p3 instance values:\");        DisplayValues(p3);    }    public static void DisplayValues(Person p)    {        Console.WriteLine(\"      Name: {0:s}, Age: {1:d}\", p.Name, p.Age);        Console.WriteLine(\"      Value: {0:d}\", p.IdInfo.IdNumber);    }}// The example displays the following output://       Original values of p1 and p2://          p1 instance values://             Name: Sam, Age: 42//             Value: 6565//          p2 instance values: p2는 p1의 얕은 복사//             Name: Sam, Age: 42//             Value: 6565////       Values of p1 and p2 after changes to p1://          p1 instance values://             Name: Frank, Age: 32//             Value: 7878//          p2 instance values://             Name: Sam, Age: 42//             Value: 7878 // 얕은 복사이므로 변경 됨////       Values of p1 and p3 after changes to p1://          p1 instance values://             Name: George, Age: 39//             Value: 8641//          p3 instance values://             Name: Frank, Age: 32 // 변경전 p1 값//             Value: 7878 // 깊은 복사로 독립적임📘유니티의 Prefab의 프로토타입 패턴  프리팹의 일부 인스턴스를 다르게 만들고 싶은 경우 개별 프리팹 인스턴스의 설정을 오버라이드할 수 있습니다. 또한 프리팹의 배리언트를 생성하여 오버라이드 집합을 유의미한 프리팹 배리에이션으로 그룹화할 수도 있습니다.🔗 참고 : 유니티 매뉴얼🤔 프리팹 더 알아보기프리팹은 기본적으로 다른 복사본과 독립적으로 작동할 수 있는 복사본을 만드는 데 사용할 수 있는 청사진이다.이외에도 유니티에서 제공하는 GPU Instancing으로 적은 수의 드로우 콜을 사용하여 동일한 메시의 여러 복제본을 한 번에 그리거나 렌더링할 수 있다.유니티의 GPU Instancing📌 Other &amp; Referencerefactoring guru: 프로토타입 패턴프로토타입관련 유니티 예제닷넷 # ICloneable 인터페이스 도큐먼트"
+  },
+  
+  {
+    "title": "chapter 3 경량 패턴",
+    "url": "/posts/03Flyweight/",
+    "categories": "GameProgramming, GameProgrammingPattern",
+    "tags": "designPattern, Flyweight",
+    "date": "2022-09-27 05:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "👀 경량 패턴 (Flyweight)  공유를 통해 많은 수의 소립객체들을 효과적으로 지원합니다.(GoF의 디자인 패턴 265p)      Tree Class 예시    텍스처, 메시, 컬러등 다양한 데이터들이 트리 하나에 포함되어 있다.    class Tree {     private:      Mesh mesh_;   Texture bark_;   Texture leaves_;   Vector position_;   double height_;  double thickness_;   Color barkTint_;   Color leafTint_;    };      🕑 언제 사용되는가?어떤 객체의 개수가 너무 많아서 가볍게 만들고 싶을 때 사용하는 구조 패턴이다.문제의 예시로 맵에 존재하는 다수의 동일한 인스턴스들을 사용할때 확인할 수 있다. 맵 타일, 동일한 나무 등에 경량 패턴이 사용되어야 한다. 타일마다 지형 인스턴스를 하나씩 만드는 건 비용적 문제가 발생한다.🤔경량 패턴경량 패턴은 객체 데이터를 두 종류로 나눈다.      고유 상태    모든 객체의 데이터 값이 같아서 공유할 수 있는 데이터 (ex. 트리 클래스의 메시,텍스처 등)        외부 상태    인스턴스별로 값이 다른 데이터 (ex. 트리의 위치,크기 등)  경량 패턴은 한개의 고유 상태를 다른 객체에서 공유하게 만들어 메모리 사용량을 줄인다.🧐 경량 패턴은 어떻게 사용될까?게임 내에서 지형을 타일로 표현해보자 Terrain tiles_[WIDTH][HEGHT]로 표현할 수 있겠지만 타일마다 Terrain 인스턴스를 하나씩 만드는 비용을 피해야한다.경량 패턴의 정의대로 지형에 대한 상태는 모든 객체의 데이터 값이 같은 고유 상태이다. 따라서 지형의 종류별로 Terrain객체가 여러개 있을 필요가 없다. 위 코드를 객체의 포인터로 수정하여Terrain* tiles_[WIDTH][HEGHT] 지형 종류가 같은 타일들은 몯 같은 Terrain 인스턴스 포인터를 가지게 한다.Q. 참조하는 원본 객체는 어디에 존재하게 되는가?  참조하는 객체는 여러곳에서 사용된다.  참조하는 객체가 동적으로 할당되는 경우 원본 객체의 생명주기를 관리하기가 어려워진다.따라서 기본이 되는 클래스에 저장하는게 가장 좋다.위 Terrain 인스턴스의 경우 World라는 클래스에서 GenerateTerrain을 실행해 tile을 초기화한다고 하면 Terrain도 World에서 관리한다.🧐 성능에 대해서  조금 더 생각해보기여기서 지형 데이터를 포인터로 접근한다는 것은 간접 참조한다는 뜻이다.int cost = World.getTile(2,3).getMovementCost();이동 비용과 같은 데이터를 포인터를 얻고 나서 이동 비용을 얻는데 이렇게 포인터를 따라가면 캐시 미스가 발생할 수 있어 성능이 조금 떨어질 수 있다.  최적화를 위해선 언제나 먼저 측정하는 것이 좋다.포인터가 열거형보다 느릴 수도 아닐 수도 있다. 이는 객체가 메모리에 어떤 식으로 배치되느냐에 따라 달라질 수 있는 부분이다.📌 Other &amp; Reference🔽 블럭 예시로 한번에 이해할 수 있음!https://yupdown.tistory.com/8디자인 패턴 다시 보기: 경량 패턴"
+  },
+  
+  {
+    "title": "이분탐색 lower_bound를 활용한 가장 긴 증가하는 부분 수열 풀이",
+    "url": "/posts/Algorithm001/",
+    "categories": "Algorithm, BinarySearch",
+    "tags": "binarysearch, c++",
+    "date": "2022-09-24 21:22:00 +0900",
+    
+
+
+
+
+
+    "snippet": "가장 긴 증가하는 부분 수열 2🔗 https://www.acmicpc.net/problem/12015수열 A가 주어졌을 때, 가장 긴 증가하는 부분 수열을 구하는 프로그램을 작성하시오.예를 들어, 수열 A = {10, 20, 10, 30, 20, 50} 인 경우에 가장 긴 증가하는 부분 수열은 A = {10, 20 , 10, 30, 20, 50} 이고, 길이는 4이다.첫째 줄에 수열 A의 크기 N (1 ≤ N ≤ 1,000,000)이 주어진다.🦕 풀이 진행 과정N 값이  1,000,000 이므로 이중for문을 통한 계산은 어렵다는 것은 알 수 있지만 어떻게 이분탐색으로 풀이를 해야할지 감이 오지 않았다.순차적으로 이전 값보다 크면 넣어가다가 아닌 수 가 나오면 lower_bound를 사용해 교체하는 식으로 진행하면된다.⬇️ lower_bound#include &lt;algorithm&gt; 를 포함해야한다.  ForwardIt는 한방향으로 진행하는 Iterator를 의미한다.ForwardIt lower_bound( ForwardIt first, ForwardIt last, const T&amp; value );lower_bound는 하한선을 의미하며 first - last 범위 내에서 value 보다 같거나 큰 값을 가진 원소의 반복자를 반환한다.👩‍💻풀이#include &lt;iostream&gt;#include &lt;algorithm&gt;#include &lt;vector&gt;using namespace std;int main() {\tint N,n;\tcin&gt;&gt;N;\tvector&lt;int&gt; v;\tcin&gt;&gt;n;\tv.push_back(n);\tfor(int i = 1;i&lt;N;i++)\t{\t\tcin&gt;&gt;n;\t\tif(v[v.size()-1]&lt;n) //step1. 입력값이 배열의 마지막값보다 큰 경우에는 배열에 추가한다.\t\t\tv.push_back(n);\t\telse //step2. 입력값이 배열의 마지막값보다 작은 경우는 배열내의 같거나 큰 값을 입력값으로 바꾼다.\t\t{\t\t\tv[lower_bound(v.begin(),v.end(),n) - v.begin()]=n;\t\t}\t}\tcout&lt;&lt;v.size();\treturn 0;}🔗 Reference[lower_bound] https://en.cppreference.com/w/cpp/algorithm/lower_bound"
+  },
+  
+  {
+    "title": "문제집",
+    "url": "/posts/Algorithm_Workbook/",
+    "categories": "Algorithm, BinarySearch",
+    "tags": "binarysearch, c++",
+    "date": "2022-09-24 12:22:00 +0900",
+    
+
+
+
+
+
+    "snippet": "비트필드를 이용한 다이나믹 프로그래밍🔗 비트필드를 이용한 다이나믹 프로그래밍🔗 Reference[lower_bound] https://en.cppreference.com/w/cpp/algorithm/lower_bound"
+  },
+  
+  {
+    "title": "IEnumerator, IEnumerable 인터페이스",
+    "url": "/posts/IEnumerable/",
+    "categories": "Language, C#",
+    "tags": "ienumerable, iEnumerator",
+    "date": "2022-09-21 06:10:00 +0900",
+    
+
+
+
+
+
+    "snippet": "유니티 코루틴를 사용하며 여러개의 코루틴을 사용하기 위해 List&lt; IEnumerator&gt; 로 루틴을 호출하며 사용했는데 한번 코루틴이 진행되면 Current가 계속 WaitForSeconds에 남아 이후 코루틴을 재실행할 수 없는 일이 발생하였다.MoveNext(), Reset()등을 사용해보고자 했으나 Reset은 접근이 되지않았고 MoveNext()를 진행해도 변화가 없어서 먼저 코루틴의 내부 구조와 IEnumerator 및 IEnumerable 에 대해 자세히 알아보고자한다.📖  IEnumerator 인터페이스제네릭이 아닌 컬렉션을 단순하게 반복할 수 있도록 지원하며 제네릭이 아닌 모든 열거자의 기본 인터페이스이다.System.Collections.Generic.Stack.Enumerator,System.Collections.Generic.List.Enumerator 등 제너릭이 해당 인터페이스를 상속받는 것을 확인할 수 있다.📖  IEnumerable 인터페이스제네릭이 아닌 컬렉션에서 단순하게 반복할 수 있도록 지원하는 열거자를 노출하기 위한 인터페이스이다.따라서 어떤 클래스를 컬렉션들과 같이 반복가능하게 만들고 싶다면 해당 클래스에대한 IEnumerator,IEnumerable를 상속받는 클래스들을 만들어 주면 된다.👩‍💻 예제  일반적인 클래스using System; using System.Collections;  public class Person { public Person(string fName, string lName) { \tthis.firstName = fName; \tthis.lastName = lName; } \tpublic  string firstName; \tpublic  string lastName; }  일반 클래스의 컬렉션 클래스// 사람 객체에 대한 (Collection)집합//IEnumerable 를 상속받아서 ForEach을 사용할 수 있음public class People : IEnumerable { \t private Person[] _people;\t public People(Person[] pArray) \t { \t\t _people = new Person[pArray.Length]; \t\t for (int i = 0; i &lt; pArray.Length; i++) \t  \t\t_people[i] = pArray[i]; \t } \t// IEnumerator를 위한 GetEnumerator 구현\tIEnumerator IEnumerable.GetEnumerator() \t\t{ return (IEnumerator) GetEnumerator(); }\t// PeopleEnum은 People클래스에 대한 IEnumerator 클래스이다.\tpublic PeopleEnum GetEnumerator() \t\t{ return  new PeopleEnum(_people); } }  일반 클래스의 컬렉션을 사용하기 위한 IEnumerator 클래스//   IEnumerable을 구현할 때 IEnumerator도 같이 구현해야 쓸 수 있다.public class PeopleEnum : IEnumerator{    public Person[] _people;    // MoveNext()가 처음 호출되기 전까지 열거자(Enumerators)는 첫 번째 요소 앞에 배치된다.    int position = -1;    public PeopleEnum(Person[] list)    {        _people = list;    }    public bool MoveNext()    {        position++;        return (position &lt; _people.Length);    }\t// Reset은 다시 위치를 -1로 변경함    public void Reset()    {        position = -1;    }    object IEnumerator.Current    {        get        {            return Current;        }    }    public Person Current    {        get        {            try            {                return _people[position];            }            catch (IndexOutOfRangeException)            {                throw new InvalidOperationException();            }        }    }}  forEach구문 사용    static void Main()    {        Person[] peopleArray = new Person[3]        {            new Person(\"John\", \"Smith\"),            new Person(\"Jim\", \"Johnson\"),            new Person(\"Sue\", \"Rabon\"),        };\t//IEnumerable 컬렉션 집합인 People에서 foreach 구문이 사용 가능해진다. MoveNext() 를 호출하여 처음부터 배열의 끝까지 순회한다.        People peopleList = new People(peopleArray);        foreach (Person p in peopleList)            Console.WriteLine(p.firstName + \" \" + p.lastName);    }🔗 ReferenceIEnumerator 인터페이스"
+  },
+  
+  {
+    "title": "쉐이더란 무엇인가?",
+    "url": "/posts/Graphics01/",
+    "categories": "Grapics, book",
+    "tags": "shader, renderingPipeline",
+    "date": "2022-09-18 07:00:06 +0900",
+    
+
+
+
+
+
+    "snippet": "  유니티 쉐이더 스타트업 책을 기반으로 정리한 포스트입니다.쉐이더란?  3D 그래픽에서 최종적으로 화면에 출력되는 픽셀의 색상(채도,밝기 등)을 정하는 함수렌더링 파이프라인렌더링 파이프라인이란 화면에 보여지는 렌더링이 이루어지는 단계를 의미한다.The graphics pipeline in OpenGL consists of these 5 step일반적인 렌더링 파이프라인은 1. 오브젝트 데이터 받아고 2. 버텍스 쉐이더 3. 래스터라이저 4. 픽셀쉐이더,프레그먼트 쉐이더 단계를 거친다.1️⃣ 오브젝트 데이터 받아오기그래픽카드는 버텍스(Vertex,정점) 로 이루어진 물체의 데이터값을 받아온다. 이때 버텍스안에는 인덱스 넘버, 포지션, 노멀, 컬러 값등의 정보가 포함되어 있다.그래픽카드에서는 이 버텍스의 정보를 가지고 버텍스로 이루어진 삼각형 면을 생성해 버텍스(정점) 쉐이더로 넘긴다.2️⃣ 버텍스 쉐이더버텍스 쉐이더는 버텍스 데이터를 이용해 좌표 변환을 진행한다.  로컬 좌표계          모든 오브젝트들이 자기가 세상의 중심인 상태로 자신의 중심이 (0,0,0)가 된다. (In Unity Object coordinate system)        월드 좌표계          절대 좌표인 월드 좌표계의 위치로부터 각 물체의 상대적인 위치 값 월드 좌표계에서 실제 월드의 중심은 0,0,0이며 다른 물체들은 여기서 얼마나 떨어져 있는 지로 표현된다.            카메라 좌표계    1.  Orthographic Projection          월드 좌표계의 버텍스들을 카메라 행렬 로 곱해서 월드 좌표계의 오브젝트들이 카메라 중심점으로 부터의 상대적 거리로 다시 연산된다. (물체를 화면에서 볼 수 있으나 원근감은 없음)        2.  Perspective Projection          카메라 행렬로 정렬된 버텍스들을 프로젝션 행렬로 곱해져 원근감을 부여한다. 카메라에서 먼 곳은 좁혀진 것 처럼 버텍스 위치를 조정한다.      여기까지 진행된 오브젝트는 아직 픽셀 쉐이더를 거치지 않았기 때문에 모니터에서는 볼 수 없는 3D 공간에 존재하는 오브젝트일 뿐이다.3️⃣ 레스터라이저레스터라이저란, 오브젝트가 모니터에서 표현될 때 어느 픽셀로 표현될 것인지 나타내는 것을 의미한다.즉 3D 오브젝트가 모니터에 보이도록 픽셀화(래스터화)하는 과정을 의미한다.4️⃣ 픽셀쉐이더(Pixel Shader) / 프래그먼트쉐이더(Fragment Shader)픽셀쉐이더가 가동되면서 조명과 텍스처, 그림자와 각종 특수효과등을 연산하게된다.Other  GLSL 쉐이더 관련 서적 번역본The Book of Shaders by  Patricio Gonzalez Vivo"
+  },
+  
+  {
+    "title": "macOS 개발 환경 세팅하기",
+    "url": "/posts/Settings/",
+    "categories": "ETC, setting",
+    "tags": "macOS, iMac",
+    "date": "2022-09-15 07:22:00 +0900",
+    
+
+
+
+
+
+    "snippet": "macOS 개발 환경 세팅하기imac에서 개발환경 세팅하기Homebrew 설치macOS 용 패키지 관리자인 Homebrew를 설치한다.  https://brew.sh/index_ko/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"터미널에 위 명령어를 복사해 설치를 진행한다.git 설치git 명령어를 치면 자동으로 설치가 완료되고 도움말이 나온다.설치된 버전은 2.32.1Sourcetree 다운로드  https://www.sourcetreeapp.com/페이지에서 다운 받고 설치를 진행한다.원격에서 ‘연결’ - ‘계정’ - ‘추가’ 로 깃허브 계정을 연결한다.연결이 완료되면 원격 목록에 내 계정에 등록된 repository를 모두 확인할 수 있다.Unity Hub &amp; VSCode 설치  https://code.visualstudio.com/vscode도 설치한 후 깃 계정으로 연결하면 기존과 동일한 환경을 가져올 수 있다.Extension으로는 C/C++ , C# , unity tools 를 다운 받았다.imac + vscode + unity 로 자동완성 기능을 사용하기 위해서는 mac mono 가 필요하다. macOS Mono닷넷도 다운로드 받아준다. .NET"
+  },
+  
+  {
+    "title": "블로그 생성하기",
+    "url": "/posts/Test/",
+    "categories": "ETC, blog",
+    "tags": "jekyll, chirpy",
+    "date": "2022-09-12 21:00:00 +0900",
+    
+
+
+
+
+
+    "snippet": "GitBlog 테스트깃 블로그 생성 테스트 및 진행내용 정리용 포스트TODOLIST      프로필 이미지 변경하기        카테고리  추가하기        태그 추가하기        댓글기능 추가하기        ABOUT 추가하기        구글 애널리틱스 계정 및 추가하기  로컬에서 테스트하기터미널에서 아래 명령어로 로컬에 띄운 후 변경사항이 잡히면 Regenerating되며 문법상 에러가 발생하면 에러로그가 나타난다.jekyll serve카테고리 및 태그 추가하기게시글 상단에 아래 양식에 맞게 작성하면 자동으로 카테고리와 태그가 생성된다.---title: TITLEdate: 2022-09-12categories: [TOP_CATEGORIE, SUB_CATEGORIE]tags: [TAG]    ---포스트 관련 정리글  https://jekyllrb.com/docs/posts/  https://chirpy.cotes.page/posts/write-a-new-post/포스트가 올라가지 않는 문제점게시글을 작성하면 로컬에서는 확인이 되는데 push 이후 github.io에서는 보이지 않는 문제점이 있었다.  https://stackoverflow.com/questions/30625044/jekyll-post-not-generated?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qaYou can use jekyll build --verbose to view build process in detail.위 명령어로 확인해봐도 정상적으로 발췌된 것으로 나왔다.마크다운 온라인 에디터  https://stackedit.io/"
+  }
+  
+]
+

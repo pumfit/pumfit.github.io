@@ -1,0 +1,12 @@
+I"<h1 id="gitblog-테스트">GitBlog 테스트</h1>
+<p>깃 블로그 생성 테스트 및 진행내용 정리용 포스트</p>
+<h2 id="todolist">TODOLIST</h2>
+<ul class="task-list">
+  <li class="task-list-item">
+    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />프로필 이미지 변경하기</p>
+  </li>
+  <li class="task-list-item">
+    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />카테고리  추가하기</p>
+  </li>
+</ul>
+:ET

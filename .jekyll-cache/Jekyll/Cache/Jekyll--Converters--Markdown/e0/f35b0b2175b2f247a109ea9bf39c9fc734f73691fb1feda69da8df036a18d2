@@ -1,0 +1,94 @@
+I"{<h1 id="-두-위치값-사이-각도-구하기"><strong>📐 두 위치값 사이 각도 구하기</strong></h1>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td> --><td class="rouge-code"><pre>    <span class="k">private</span> <span class="k">void</span> <span class="nf">CalculateAngle</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">swipeAngle</span> <span class="p">=</span> <span class="n">Mathf</span><span class="p">.</span><span class="nf">Atan2</span><span class="p">(</span><span class="n">secondPos</span><span class="p">.</span><span class="n">y</span> <span class="p">-</span> <span class="n">firstPos</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">secondPos</span><span class="p">.</span><span class="n">x</span> <span class="p">-</span> <span class="n">firstPos</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="p">*</span> <span class="n">Mathf</span><span class="p">.</span><span class="n">Rad2Deg</span><span class="p">;</span>
+        <span class="n">Debug</span><span class="p">.</span><span class="nf">Log</span><span class="p">(</span><span class="n">swipeAngle</span><span class="p">);</span>
+    <span class="p">}</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>두 위치 값을 통해 |x2-x1| |y2 - y1| 거리 값을 구할 수 있으므로 탄젠트를 사용하여 두 위치값 사이 각도를 구할 수 있다.</p>
+
+<h2 id="-mathfatan2"><strong>📐 Mathf.Atan2</strong></h2>
+
+<p>탄젠트를 적용했을 때 지정된 두 숫자의 몫이 나오는 각도를 반환한다.</p>
+
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td> --><td class="rouge-code"><pre>	<span class="k">public</span> <span class="k">static</span> <span class="kt">float</span> <span class="nf">Atan2</span> <span class="p">(</span><span class="kt">float</span> <span class="n">y</span><span class="p">,</span> <span class="kt">float</span> <span class="n">x</span><span class="p">);</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<dl>
+  <dt>반환 값</dt>
+  <dd>Single</dd>
+</dl>
+
+<ul>
+  <li>
+    <p>-π ≤θ ≤π 범위의 각도 θ(라디안) 및 tan(θ) = y / x입니다(여기서 x, y는 데카르트 평면 상의 지점임). 다음 사항이 적용됩니다.</p>
+
+    <ul>
+      <li>
+        <p>(x, y)가 1사분면 안에 있으면 0 &lt; θ &lt; π/2입니다. (0°~90°)</p>
+      </li>
+      <li>
+        <p>(x, y)가 2사분면 안에 있으면 π/2 &lt; θ ≤ π입니다. (90°~180°)</p>
+      </li>
+      <li>
+        <p>(x, y)가 3사분면 안에 있으면 -π &lt; θ &lt; -π/2입니다. (0°~-90°)</p>
+      </li>
+      <li>
+        <p>(x, y)가 4사분면 안에 있으면 -π/2 &lt; θ &lt; 0입니다. (-90°~-180°)</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>점이 사분면의 경계에 있는 경우 반환 값은 다음과 같습니다.</p>
+
+    <ul>
+      <li>
+        <p>y가 0이고 x가 음수가 아니면 θ = 0입니다.</p>
+      </li>
+      <li>
+        <p>y가 0이고 x가 음수이면 θ = π입니다.</p>
+      </li>
+      <li>
+        <p>y가 양수이고 x가 0이면 θ = π/2입니다.</p>
+      </li>
+      <li>
+        <p>y가 음수이고 x가 0이면 θ = -π/2입니다.</p>
+      </li>
+      <li>
+        <p>y가 0이고 x가 0이면 θ = 0입니다.</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>x 또는 y가 NaN이거나, x 및 y가 PositiveInfinity 또는 NegativeInfinity이면 이 메서드는 NaN을 반환합니다.</p>
+
+<h3 id="호도법과-라디안">호도법과 라디안</h3>
+
+<p><img src="/assets/img/post/dev/radian.png" alt="img-graphicspipeline" /></p>
+
+<p>호 AB 의 길이는 중심각에 비례한다. 따라서 부채꼴 호의 중심각 a는 반지름에 상관없이 항상 일정한 값을 가진다.</p>
+
+<p>Π 라디안 = 180° 이며 1라디안은 180/Π , 1° = Π/180 라디안이다.</p>
+
+<h2 id="-mathfrad2deg"><strong>📐 Mathf.Rad2Deg</strong></h2>
+
+<p>라디안을 각도(degree/deg)로 변경하기 위한 상수로 360 / (PI * 2) 값을 가진다.</p>
+
+<h2 id="-other--reference">📌 Other &amp; Reference</h2>
+
+<p><a href="https://mathbang.net/496">호도법, 라디안</a></p>
+
+<p><a href="https://learn.microsoft.com/ko-kr/dotnet/api/system.mathf.atan2?view=net-6.0">MathF.Atan2(Single, Single) 메서드</a></p>
+:ET

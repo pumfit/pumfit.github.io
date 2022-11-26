@@ -1,0 +1,48 @@
+I"�<h1 id="macos-개발-환경-세팅하기">macOS 개발 환경 세팅하기</h1>
+
+<p>imac에서 개발환경 세팅하기</p>
+
+<h2 id="homebrew-설치">Homebrew 설치</h2>
+
+<p>macOS 용 패키지 관리자인 Homebrew를 설치한다.</p>
+
+<ul>
+  <li>https://brew.sh/index_ko</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></p>
+
+<p>터미널에 위 명령어를 복사해 설치를 진행한다.</p>
+
+<h2 id="git-설치">git 설치</h2>
+
+<p>git 명령어를 치면 자동으로 설치가 완료되고 도움말이 나온다.</p>
+
+<p>설치된 버전은 2.32.1</p>
+
+<h2 id="sourcetree-다운로드">Sourcetree 다운로드</h2>
+
+<ul>
+  <li>https://www.sourcetreeapp.com/</li>
+</ul>
+
+<p>페이지에서 다운 받고 설치를 진행한다.</p>
+
+<p>원격에서 ‘연결’ - ‘계정’ - ‘추가’ 로 깃허브 계정을 연결한다.
+연결이 완료되면 원격 목록에 내 계정에 등록된 repository를 모두 확인할 수 있다.</p>
+
+<h2 id="unity-hub--vscode-설치">Unity Hub &amp; VSCode 설치</h2>
+
+<ul>
+  <li>https://code.visualstudio.com/</li>
+</ul>
+
+<p>vscode도 설치한 후 깃 계정으로 연결하면 기존과 동일한 환경을 가져올 수 있다.</p>
+
+<p>Extension으로는 C/C++ , C# , unity tools 를 다운 받았다.</p>
+
+<p>imac + vscode + unity 로 자동완성 기능을 사용하기 위해서는 mac mono 가 필요하다. <a href="https://www.mono-project.com/download/stable/#download-mac">macOS Mono</a></p>
+
+<p>닷넷도 다운로드 받아준다. <a href="https://dotnet.microsoft.com/en-us/download">.NET</a></p>
+
+:ET

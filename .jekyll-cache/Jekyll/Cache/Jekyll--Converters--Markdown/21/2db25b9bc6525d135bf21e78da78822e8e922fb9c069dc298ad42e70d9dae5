@@ -1,0 +1,5 @@
+I"d<h1 id="유니티-timetime-정리">⏰유니티 Time.time 정리</h1>
+<p>Time.time을 이용하여 한 씬의 플레이 시간을 체크하고자 했다. 하지만 생각대로 씬 전환이 되면 Time.time이 초기화되는 것이 아니라는 것을 알게되어 정리를 하게 되었다.</p>
+
+<h2 id="️unityenginetime">⏱️UnityEngine.Time</h2>
+:ET

@@ -1,0 +1,294 @@
+
+
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>http://localhost:4000/</id>
+  <title>Storage</title>
+  <subtitle></subtitle>
+  <updated>2022-11-19T22:53:07+09:00</updated>
+  <author>
+    <name>shin eunju</name>
+    <uri>http://localhost:4000/</uri>
+  </author>
+  <link rel="self" type="application/atom+xml" href="http://localhost:4000/feed.xml"/>
+  <link rel="alternate" type="text/html" hreflang="ko"
+    href="http://localhost:4000/"/>
+  <generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator>
+  <rights> © 2022 shin eunju </rights>
+  <icon>/assets/img/favicons/favicon.ico</icon>
+  <logo>/assets/img/favicons/favicon-96x96.png</logo>
+
+
+  
+  <entry>
+    <title>chapter 11 바이트 코드(1)</title>
+    <link href="http://localhost:4000/posts/11BiteCode(1)/" rel="alternate" type="text/html" title="chapter 11 바이트 코드(1)" />
+    <published>2022-11-19T21:00:06+09:00</published>
+  
+    <updated>2022-11-19T21:00:06+09:00</updated>
+  
+    <id>http://localhost:4000/posts/11BiteCode(1)/</id>
+    <content src="http://localhost:4000/posts/11BiteCode(1)/" />
+    <author>
+      <name>shin eunju</name>
+    </author>
+
+  
+    
+    <category term="GameProgramming" />
+    
+    <category term="GameProgrammingPattern" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      👀 바이트 코드 (Bytecode)
+
+가상 머신 명령어를 인코딩한 데이터로 행동을 표현할 수 있는 유연성을 제공한다.
+
+
+  인코딩 
+사용자가 입력한 문자나 기호들을 컴퓨터가 이용할 수 있는 신호 코드로 만드는 것을 말한다.
+
+
+📄데이터 &amp;gt; 코드
+
+데이터를 수정하여 기능을 구현하면 코드와 데이터를 분리할 수 있다.
+
+행동을 데이터 파일에 따로 정의해두고 게임 코드에서 읽어서 실행할 수 있다면 핵심 게임 코드와 데이터를 안전하게 격리하며 여러 기능을 구현할 수 있다.
+
+🧩인터프리터 패턴
+실행하고 싶은 프로그래밍언어가 아래와 같은 수식을 지원한다고 하자
+(1+2) * (3-4)
+이런 표현식은 객체로 변환된다. 숫자 리터럴은 아래처럼 변환된다.
+
+
+
+숫자 상수는 단순히 숫자 값을 래핑한 객체이다. 연산...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>[Unity] UnityEngine.Time Time.time</title>
+    <link href="http://localhost:4000/posts/TimeClass/" rel="alternate" type="text/html" title="[Unity] UnityEngine.Time Time.time" />
+    <published>2022-11-10T21:00:06+09:00</published>
+  
+    <updated>2022-11-10T21:00:06+09:00</updated>
+  
+    <id>http://localhost:4000/posts/TimeClass/</id>
+    <content src="http://localhost:4000/posts/TimeClass/" />
+    <author>
+      <name>shin eunju</name>
+    </author>
+
+  
+    
+    <category term="Unity" />
+    
+    <category term="UnityEngine" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      ⏰유니티 Time.time 정리
+Time.time을 이용하여 한 씬의 플레이 시간을 체크하고자 했다. 하지만 생각대로 씬 전환이 되면 Time.time이 초기화되는 것이 아니라는 것을 알게되어 정리를 하게 되었다.
+
+⏱️UnityEngine.Time
+
+유니티에서 제공하는 시간 정보를 가져오기 위한 인터페이스이다.
+
+⌚Time.time
+Time.time은 게임 시작 이후의 시간이다. 이 시간은 해당되는 프레임의 시작 시간으로 한 프레임 내에서 여러번 호출된다면 동일하게 해당 프레임의 시작 시간이 호출된다.
+
+FixedUpdate에서 이 Time.time을 호출한다면 fixedTime과 동일한 값을 반환한다.
+
+Awake에서는 시간 값은 정의되지 않으며, Awake가 완료된 이후부터 시간이 흐른다.
+
+🔍 ...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>[JS] 템플릿 리터럴</title>
+    <link href="http://localhost:4000/posts/Backtick/" rel="alternate" type="text/html" title="[JS] 템플릿 리터럴" />
+    <published>2022-10-26T21:00:06+09:00</published>
+  
+    <updated>2022-10-26T21:00:06+09:00</updated>
+  
+    <id>http://localhost:4000/posts/Backtick/</id>
+    <content src="http://localhost:4000/posts/Backtick/" />
+    <author>
+      <name>shin eunju</name>
+    </author>
+
+  
+    
+    <category term="Language" />
+    
+    <category term="JS" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      콘솔로그에 변수를 출력하는 경우 + 연산자를 통해 문자열을 더해 출력하는 방법보다 ` 와 ${}를 사용하는 방식이 추가적인 문자열 연산이 들어가지 않아 효과적임을 알고 있었지만 정확한 명칭을 알지 못해 명칭과 몰랐던 기능을 정리해보았다.
+
+🔍탬플릿 리터럴이란?
+
+템플릿 리터럴은 내장된 표현식을 허용하는 문자열 리터럴이다.
+
+이 템플릿 리터럴은 이중 따옴표 나 작은 따옴표 대신 백틱 ` 을 사용한다.
+
+또한 플레이스 홀더를 이용하여 표현식을 넣을 수 있는데, 이는 $ 와 중괄호( $ {expression} ) 로 표기할 수 있다.
+
+    `string text`
+
+    `string text line 1
+     string text line 2`
+
+    `string text ${expressio...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>chapter 10 업데이트 메서드</title>
+    <link href="http://localhost:4000/posts/10UpdateMethod/" rel="alternate" type="text/html" title="chapter 10 업데이트 메서드" />
+    <published>2022-10-22T21:56:06+09:00</published>
+  
+    <updated>2022-10-22T21:56:06+09:00</updated>
+  
+    <id>http://localhost:4000/posts/10UpdateMethod/</id>
+    <content src="http://localhost:4000/posts/10UpdateMethod/" />
+    <author>
+      <name>shin eunju</name>
+    </author>
+
+  
+    
+    <category term="GameProgramming" />
+    
+    <category term="GameProgrammingPattern" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      👀 업데이트 메서드 (Update Method)
+
+🤔패턴 의도
+
+컬렉션에 들어 있는 객체별로 한 프레임 단위의 작업을 진행하라고 알려 전체를 시뮬레이션한다.
+
+🧐 업데이트 메서드는 왜 사용되는가?
+
+게임에서 플레이어가 보물을 찾으러 이동할 때 지키던 해골 경비병이 캐릭터에게 다가가거나 왔다갔다하며 순찰해야할 것 이다.
+
+이런 움직임을 한프레임에 한번에 진행하면 갑자기 캐릭터가 순간이동하게 된다. 한프레임에 한 걸음 씩 움직이도록 해야 캐릭터가 움직이는 것처럼 보일 것 이다.
+
+👩‍💻예제 코드
+
+게임 루프 내에서 해골 병사가 좌우로 왔다 갔다하는 코드를 만들어보면 아래와 같다.
+
+Entity skeleton;
+bool patrollingLeft = false; //이동 방향 변수
+double x = 0;...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>chapter 9 게임 루프 (2)</title>
+    <link href="http://localhost:4000/posts/09GameLoop02/" rel="alternate" type="text/html" title="chapter 9 게임 루프 (2)" />
+    <published>2022-10-10T14:00:06+09:00</published>
+  
+    <updated>2022-10-14T21:47:57+09:00</updated>
+  
+    <id>http://localhost:4000/posts/09GameLoop02/</id>
+    <content src="http://localhost:4000/posts/09GameLoop02/" />
+    <author>
+      <name>shin eunju</name>
+    </author>
+
+  
+    
+    <category term="GameProgramming" />
+    
+    <category term="GameProgrammingPattern" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      👀 게임 루프 (Game Loop)
+
+게임의 진행 시간을 유저 입력,프로세서 속도와 디커플링한다.
+
+⏱️ 자투리 시간
+
+업데이트는 고정 시간 간격을 하더라도, 렌더링은 그냥 진행된다. 이때 두 업데이트 사이에 렌더링이 되는 경우가 생길 수 있다.
+
+
+
+업데이트는 고정간격으로 진행되지만 렌더링은 가능할 때마다 진행된다.
+
+lag 값을 통해 렌더링할때 업데이트 프레임이 시간적으로 얼마나 떨어져 있는지를 정확히 알 수 있다.  즉, lag값은 다음 프레임까지 남은 시간이다.
+
+렌더링을 할 때 아래처럼 인수를 넘겨준다.
+
+
+
+render(lag/ MS_PER_UPDATE); 이제 렌더링은 정규화를 통해 0~1값이 넘어가므로 프레임레이트를 알 필요가 없어진다.
+
+⏰게임 루프 패턴 사용 시 주의점
+
+🔋전력 소모 ...
+    </summary>
+  
+
+  </entry>
+
+</feed>
+
+

@@ -1,0 +1,309 @@
+I"�D<h1 id="-프로토타입-prototype"><strong>👀 프로토타입 (Prototype)</strong></h1>
+
+<p><img src="/assets/img/post/programmingPattern/Prototype.png" alt="img-graphicspipeline" /></p>
+
+<blockquote>
+  <p>원형이 되는 인스턴스를 사용하여 생성할 객체의 종류를 명시하고, 이렇게 만든 견본을 복사해서 새로운 객체를 생성합니다. GoF 디자인 패턴 69p</p>
+</blockquote>
+
+<p>한가지 스포너가 한 가지 몬스터 인스턴스만 만드는 경우 만약 몬스터 클래스마다 스포너 클래스를 만든다고하면 스포너 클래스의 상속구조가 몬스터 클래스의 상속 구조와 동일할 것이다.</p>
+
+<p>이와 같은 문제는 <strong>프로토타입 패턴</strong>으로 해결할 수 있다. 핵심은 어떤 객체가 자기와 비슷한 객체를 스폰할 수 있다는 점이다.</p>
+
+<p>예를 들어, 어떤 몬스터 객체든지 자신과 비슷한 몬스터 객체를 만드는 원형객체로 사용할 수 있다.</p>
+
+<p>Monster의 하위 클래스에서는 
+<u>자신의 자료형과 상태가 같은 새로운 객체를 반환하도록</u> clone()을 구현한다.</p>
+
+<h2 id="️-net--의-icloneable-인터페이스">🛠️ <strong>.Net</strong>  의 <code class="language-plaintext highlighter-rouge">ICloneable</code> 인터페이스</h2>
+
+<blockquote>
+  <p>ICloneable는 복제(클래스에서 기존 인스턴스와 같은 값을 갖는 새 인스턴스를 만듦)를 지원합니다.
+<code class="language-plaintext highlighter-rouge">public  interface  ICloneable</code></p>
+</blockquote>
+
+<h3 id="구현자-참고">구현자 참고</h3>
+
+<p>인터페이스를  ICloneable 사용하려면 메서드 구현의 Clone()에서 <strong>현재 개체 인스턴스의 복사본을 반환</strong>해야 합니다.</p>
+
+<p>이 복제 작업에서 <strong>심층 복사, 단순 복사본 또는 그 사이에 있는 항목을 수행할지 여부를 지정하지 않습니다.</strong> 또한 원래 인스턴스의 모든 속성 값을 새 인스턴스에 복사할 필요가 없습니다.</p>
+
+<ul>
+  <li>따라서, 개체를 어떤 식으로 복사할 지는 구현하는 사람에게 달렸다.</li>
+</ul>
+
+<p><strong>📌 유니티 ICloneable 예제</strong></p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">UnityEngine</span><span class="p">;</span>
+
+<span class="c1">//ICloneable를 상속받는다.</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Skeleton</span> <span class="p">:</span> <span class="n">Monster</span><span class="p">,</span> <span class="n">ICloneable</span>
+<span class="p">{</span>
+    <span class="c1">//...</span>
+
+    <span class="k">public</span> <span class="kt">object</span> <span class="nf">Clone</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// 이곳에서 깊은 복사에 대한 로직을 넣으면 깊은 복사를 수행해서 반환할 수 있다.</span>
+        <span class="k">return</span> <span class="nf">Instantiate</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h3 id="-memberwiseclone">📃 MemberwiseClone</h3>
+
+<p><strong>📌 .Net MemberwiseClone예제</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">Person</code> 클래스예제에서 개체에 대해 <code class="language-plaintext highlighter-rouge">ShallowCopy</code> <strong>단순 복사 작업</strong>을 수행하기 위한 MemberwiseClone 메서드와 개체에 <code class="language-plaintext highlighter-rouge">DeepCopy</code> <strong>심층 복사 작업</strong>을 수행하는 메서드를 볼 수 있다.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+</pre></td><td class="rouge-code"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">IdInfo</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">IdNumber</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">IdInfo</span><span class="p">(</span><span class="kt">int</span> <span class="n">IdNumber</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">IdNumber</span> <span class="p">=</span> <span class="n">IdNumber</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">Age</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">IdInfo</span> <span class="n">IdInfo</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="n">Person</span> <span class="nf">ShallowCopy</span><span class="p">()</span> <span class="c1">// MemberwiseClone를 통한 얕은 복사</span>
+    <span class="p">{</span>
+       <span class="k">return</span> <span class="p">(</span><span class="n">Person</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nf">MemberwiseClone</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">Person</span> <span class="nf">DeepCopy</span><span class="p">()</span> <span class="c1">// 깊은 복사</span>
+    <span class="p">{</span>
+       <span class="n">Person</span> <span class="n">other</span> <span class="p">=</span> <span class="p">(</span><span class="n">Person</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nf">MemberwiseClone</span><span class="p">();</span>
+       <span class="n">other</span><span class="p">.</span><span class="n">IdInfo</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">IdInfo</span><span class="p">(</span><span class="n">IdInfo</span><span class="p">.</span><span class="n">IdNumber</span><span class="p">);</span>
+       <span class="n">other</span><span class="p">.</span><span class="n">Name</span> <span class="p">=</span> <span class="n">String</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="n">Name</span><span class="p">);</span>
+       <span class="k">return</span> <span class="n">other</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><strong>📌 얕은 복사와 깊은 복사 결과 비교</strong></p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+</pre></td><td class="rouge-code"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">Example</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// Person의 인스턴스를 만들고 해당 필드에 값을 할당한다.</span>
+        <span class="n">Person</span> <span class="n">p1</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Person</span><span class="p">();</span>
+        <span class="n">p1</span><span class="p">.</span><span class="n">Age</span> <span class="p">=</span> <span class="m">42</span><span class="p">;</span>
+        <span class="n">p1</span><span class="p">.</span><span class="n">Name</span> <span class="p">=</span> <span class="s">"Sam"</span><span class="p">;</span>
+        <span class="n">p1</span><span class="p">.</span><span class="n">IdInfo</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">IdInfo</span><span class="p">(</span><span class="m">6565</span><span class="p">);</span>
+
+        <span class="c1">// p2 는 얕은 복사를 진행한다.</span>
+        <span class="n">Person</span> <span class="n">p2</span> <span class="p">=</span> <span class="n">p1</span><span class="p">.</span><span class="nf">ShallowCopy</span><span class="p">();</span>
+
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"Original values of p1 and p2:"</span><span class="p">);</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"   p1 instance values: "</span><span class="p">);</span>
+        <span class="nf">DisplayValues</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"   p2 instance values:"</span><span class="p">);</span>
+        <span class="nf">DisplayValues</span><span class="p">(</span><span class="n">p2</span><span class="p">);</span>
+
+        <span class="c1">// p1 속성 값을 변경하고 p1 및 p2 값을 표시한다.</span>
+        <span class="n">p1</span><span class="p">.</span><span class="n">Age</span> <span class="p">=</span> <span class="m">32</span><span class="p">;</span>
+        <span class="n">p1</span><span class="p">.</span><span class="n">Name</span> <span class="p">=</span> <span class="s">"Frank"</span><span class="p">;</span>
+        <span class="n">p1</span><span class="p">.</span><span class="n">IdInfo</span><span class="p">.</span><span class="n">IdNumber</span> <span class="p">=</span> <span class="m">7878</span><span class="p">;</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"\nValues of p1 and p2 after changes to p1:"</span><span class="p">);</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"   p1 instance values: "</span><span class="p">);</span>
+        <span class="nf">DisplayValues</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"   p2 instance values:"</span><span class="p">);</span>
+        <span class="nf">DisplayValues</span><span class="p">(</span><span class="n">p2</span><span class="p">);</span>
+
+        <span class="c1">// p3 는 p1을 깊은 복사한다.</span>
+        <span class="n">Person</span> <span class="n">p3</span> <span class="p">=</span> <span class="n">p1</span><span class="p">.</span><span class="nf">DeepCopy</span><span class="p">();</span>
+
+        <span class="c1">// p1 클래스의 멤버를 다른 값으로 변경하고 전체 복사본을 확인 한다.</span>
+        <span class="n">p1</span><span class="p">.</span><span class="n">Name</span> <span class="p">=</span> <span class="s">"George"</span><span class="p">;</span>
+        <span class="n">p1</span><span class="p">.</span><span class="n">Age</span> <span class="p">=</span> <span class="m">39</span><span class="p">;</span>
+        <span class="n">p1</span><span class="p">.</span><span class="n">IdInfo</span><span class="p">.</span><span class="n">IdNumber</span> <span class="p">=</span> <span class="m">8641</span><span class="p">;</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"\nValues of p1 and p3 after changes to p1:"</span><span class="p">);</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"   p1 instance values: "</span><span class="p">);</span>
+        <span class="nf">DisplayValues</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"   p3 instance values:"</span><span class="p">);</span>
+        <span class="nf">DisplayValues</span><span class="p">(</span><span class="n">p3</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">DisplayValues</span><span class="p">(</span><span class="n">Person</span> <span class="n">p</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"      Name: {0:s}, Age: {1:d}"</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">Age</span><span class="p">);</span>
+        <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"      Value: {0:d}"</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">IdInfo</span><span class="p">.</span><span class="n">IdNumber</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// The example displays the following output:</span>
+<span class="c1">//       Original values of p1 and p2:</span>
+<span class="c1">//          p1 instance values:</span>
+<span class="c1">//             Name: Sam, Age: 42</span>
+<span class="c1">//             Value: 6565</span>
+<span class="c1">//          p2 instance values: p2는 p1의 얕은 복사</span>
+<span class="c1">//             Name: Sam, Age: 42</span>
+<span class="c1">//             Value: 6565</span>
+<span class="c1">//</span>
+<span class="c1">//       Values of p1 and p2 after changes to p1:</span>
+<span class="c1">//          p1 instance values:</span>
+<span class="c1">//             Name: Frank, Age: 32</span>
+<span class="c1">//             Value: 7878</span>
+<span class="c1">//          p2 instance values:</span>
+<span class="c1">//             Name: Sam, Age: 42</span>
+<span class="c1">//             Value: 7878 // 얕은 복사이므로 변경 됨</span>
+<span class="c1">//</span>
+<span class="c1">//       Values of p1 and p3 after changes to p1:</span>
+<span class="c1">//          p1 instance values:</span>
+<span class="c1">//             Name: George, Age: 39</span>
+<span class="c1">//             Value: 8641</span>
+<span class="c1">//          p3 instance values:</span>
+<span class="c1">//             Name: Frank, Age: 32 // 변경전 p1 값</span>
+<span class="c1">//             Value: 7878 // 깊은 복사로 독립적임</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="유니티의-prefab의-프로토타입-패턴"><strong>📘유니티의 Prefab의 프로토타입 패턴</strong></h2>
+
+<blockquote>
+  <p>프리팹의 일부 인스턴스를 다르게 만들고 싶은 경우 <strong>개별 프리팹 인스턴스의 설정을 오버라이드</strong>할 수 있습니다. 또한 프리팹의 배리언트를 생성하여 오버라이드 집합을 유의미한 프리팹 배리에이션으로 그룹화할 수도 있습니다.</p>
+</blockquote>
+
+<p>🔗 참고 : <a href="https://docs.unity3d.com/kr/current/Manual/Prefabs.html">유니티 매뉴얼</a></p>
+
+<h3 id="-프리팹-더-알아보기">🤔 프리팹 더 알아보기</h3>
+
+<p>프리팹은 기본적으로 <strong>다른 복사본과 독립적으로 작동할 수 있는 복사본을 만드는 데 사용할 수 있는 청사진</strong>이다.</p>
+
+<p>이외에도 유니티에서 제공하는 GPU Instancing으로 적은 수의 드로우 콜을 사용하여 동일한 메시의 여러 복제본을 한 번에 그리거나 렌더링할 수 있다.</p>
+
+<p><a href="https://docs.unity3d.com/kr/2018.4/Manual/GPUInstancing.html">유니티의 GPU Instancing</a></p>
+
+<h2 id="-other--reference">📌 Other &amp; Reference</h2>
+
+<p><a href="https://refactoring.guru/design-patterns">refactoring guru: 프로토타입 패턴</a></p>
+
+<p><a href="https://kihontekina.dev/posts/prototype/">프로토타입관련 유니티 예제</a></p>
+
+<p><a href="https://learn.microsoft.com/ko-kr/dotnet/api/system.icloneable?view=net-6.0">닷넷 # ICloneable 인터페이스 도큐먼트</a></p>
+
+:ET

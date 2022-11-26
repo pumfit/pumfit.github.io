@@ -1,0 +1,253 @@
+I"g:<h1 id="-게임-루프-game-loop"><strong>👀 게임 루프 (Game Loop)</strong></h1>
+
+<p>게임의 진행 시간을 유저 입력,프로세서 속도와 디커플링한다.</p>
+
+<h2 id="이벤트-루프">이벤트 루프</h2>
+<p>아래는 전형적인 이벤트 루프이다. 아래와 같이 유저의 입력이 들어오길 기다린다.</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td> --><td class="rouge-code"><pre><span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">Event</span><span class="o">*</span> <span class="n">event</span> <span class="o">=</span> <span class="n">waitForEvent</span><span class="p">();</span>
+  <span class="n">dispathEvent</span><span class="p">(</span><span class="n">event</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>게임 루프의 다른 점은 루프에서 사용자 입력도 처리하지만 계속 사용자 입력만 기다리고 있는 것은 아니라는 점이다. 게임 루프는 이외에도 끊임없이 돌아가며 여러 처리들을 진행한다.</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td> --><td class="rouge-code"><pre><span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">processInput</span><span class="p">();</span>
+  <span class="n">update</span><span class="p">();</span>
+  <span class="n">render</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h2 id="게임-내의-시간">⏰게임 내의 시간</h2>
+
+<h3 id="프레임-레이트--fpsframes-per-second초당-프레임-수">프레임 레이트 / FPS(frames per second,초당 프레임 수)</h3>
+<blockquote>
+  <p><strong>프레임 레이트</strong>(Frame rate)란 디스플레이 장치가 화면 하나의 데이터를 표시하는 속도로 FPS는 1초 동안 보여주는 화면의 수를 가리키며, 로마자 약어 및 단위로는 <strong>fps</strong>(또는 <strong>프레임/초</strong>)를 쓴다.</p>
+</blockquote>
+
+<p>게임 루프가 빠르게 돌아가면 FPS가 증가하여 화면이 부드럽게 보인다. 반대로 게임 루프가 느리면 스톱모션과 같이 끊겨보일 수 있다.</p>
+
+<p>✔️ 프레임 레이트 결정 요인</p>
+
+<ul>
+  <li>한 프레임에 얼마나 많은 작업을 진행하는가</li>
+  <li>코드가 실행되는 플랫폼의 속도</li>
+</ul>
+
+<p>어떤 하드웨어에서라도 일정한 속도로 실행될 수 있도록 하는 것이 게임 루프의 핵심이다.</p>
+
+<h2 id="예제-코드">👩‍💻예제 코드</h2>
+<p>🔍 간결한 게임 루프 예시</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td> --><td class="rouge-code"><pre><span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">processInput</span><span class="p">();</span>
+  <span class="n">update</span><span class="p">();</span>
+  <span class="n">render</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h3 id="-예제의-문제점">🤔 예제의 문제점</h3>
+<p>게임 실행 속도를 제어할 수 없다는 문제점을 가지고 있다. 하드웨어별로 빠른 하드웨어라면 루프가 빠르게 진행되어 게임이 빠르게 진행되고 느린 하드웨어라면 게임이 느리게 돌아간다.</p>
+
+<p>아래는 이와 같은 문제점을 해결하기 위한 방안의 예제들이다.</p>
+
+<h3 id="-기다리기">⏰ 기다리기</h3>
+
+<p><img src="/assets/img/post/programmingPattern/nap.png" alt="img-lifecycleFlowchart" /></p>
+
+<p>주어진 프레임내에 모든 진행이 완료되었다면 다음 프레임까지 남은 시간을 기다리는 방식이다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td> --><td class="rouge-code"><pre><span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">double</span> <span class="n">start</span> <span class="o">=</span> <span class="n">getCurrentTime</span><span class="p">();</span>
+  <span class="n">processInput</span><span class="p">();</span>
+  <span class="n">update</span><span class="p">();</span>
+  <span class="n">render</span><span class="p">();</span>
+  <span class="c1">//남은 시간만큼 기다린다.</span>
+  <span class="n">sleep</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">MS_PER_FRAME</span> <span class="o">-</span> <span class="n">getCurrentTime</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>이 방식은 게임이 너무 빨라지는 것을 막아준다. 하지만, 게임이 너무 느려지는 것은 막지 못한다.</p>
+
+<h3 id="-가변-시간-간격-적용하기">⏰ 가변 시간 간격 적용하기</h3>
+
+<p>게임 루프 내 시간 간격의 문제점은 아래와 같다.</p>
+
+<ul>
+  <li>업데이트 마다 정해진 만큼의 게임 시간이 진행된다.</li>
+  <li>업데이트하는 데에는 현실 시간이 어느 정도 걸린다.</li>
+</ul>
+
+<blockquote>
+  <p>프레임 이후로 실제 시간이 얼마나 지났는지에  따라 시간 간격을 조절하면 해당 문제를 해결할 수 있다.</p>
+</blockquote>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td> --><td class="rouge-code"><pre><span class="kt">double</span> <span class="n">lastTime</span> <span class="o">=</span> <span class="n">getCurrentTime</span><span class="p">();</span><span class="c1">//이전프레임 종료시간</span>
+<span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">double</span> <span class="n">current</span> <span class="o">=</span> <span class="n">getCurrentTime</span><span class="p">();</span><span class="c1">//현재프레임 시작시간</span>
+  <span class="kt">double</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="n">current</span> <span class="o">-</span> <span class="n">lastTime</span><span class="p">;</span><span class="c1">//실제 현실시간 간격</span>
+  <span class="n">processInput</span><span class="p">();</span>
+  <span class="n">update</span><span class="p">(</span><span class="n">elapsed</span><span class="p">);</span><span class="c1">//업데이트에서 경과된 현실 시간만큼 게임 상태를 진행한다.</span>
+  <span class="n">render</span><span class="p">();</span>
+  <span class="n">lastTime</span> <span class="o">=</span> <span class="n">current</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>이와 같은 가변 시간 간격에서는 속도와 지나간 시간을 곱해 이동 거리를 구한다. 업데이트에서 받아온 시간 간격이 커지면 이동량이 더 많아지게 된다.</p>
+
+<p>따라서, 업데이트 간격에 상관없이 실제 시간 동안 같은 거리를 이동하게된다.</p>
+
+<p>유니티에서는 이 예제의 elapsed 값을 Time.deltaTime으로 사용할 수 있다.</p>
+<blockquote>
+  <p>Time.deltaTime : 마지막 프레임에서 현재 프레임까지의 간격(초)입니다. (The interval in seconds from the last frame to the current one)</p>
+</blockquote>
+
+<h3 id="-예제의-문제점-1">🤔 예제의 문제점</h3>
+
+<p>하지만 위 예제의 경우 <strong>비 결정적</strong>이며 <strong>불안정</strong>하다는 문제점이 생긴다.</p>
+
+<h3 id="-따라-잡기">⏰ 따라 잡기</h3>
+
+<p>해당 방식은 물리,AI 와 같은 로직은 고정시간 간격을 사용하고 렌더링 간격은 가변시간 간격으로 만들어 프로세서 낭비를 줄인다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td> --><td class="rouge-code"><pre><span class="kt">double</span> <span class="n">previous</span> <span class="o">=</span> <span class="n">getCurrentTime</span><span class="p">();</span>
+<span class="kt">double</span> <span class="n">lag</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span> <span class="c1">// 프레임이 시작할 때마다 실제 시간이 얼마나 지났는 지 저장하는 변수</span>
+<span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">double</span> <span class="n">current</span> <span class="o">=</span> <span class="n">getCurrentTime</span><span class="p">();</span>
+  <span class="kt">double</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="n">current</span> <span class="o">-</span> <span class="n">previous</span><span class="p">;</span>
+  <span class="n">previous</span> <span class="o">=</span> <span class="n">current</span><span class="p">;</span>
+  <span class="n">lag</span> <span class="o">+=</span> <span class="n">elapsed</span><span class="p">;</span>
+
+  <span class="n">processInput</span><span class="p">();</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="n">lag</span> <span class="o">&gt;=</span> <span class="n">MS_PER_UPDATE</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">update</span><span class="p">();</span>
+    <span class="n">lag</span> <span class="o">-=</span> <span class="n">MS_PER_UPDATE</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">render</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>이전 루프 이후로 실제 시간이 얼마나 지났는 지 (<code class="language-plaintext highlighter-rouge">elapsed</code>) 확인한 후, 게임의 현재가 실제 시간의 현재를 따라잡을때까지 (<code class="language-plaintext highlighter-rouge">lag</code>) 고정 시간 간격만큼 게임 시간을 여러 번 시뮬레이션한다.</p>
+
+<p><img src="/assets/img/post/programmingPattern/gameloopfixed.png" alt="img-gameloopfixed" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">lag</code> 값은 실제 시간에 비해  게임 시간이 얼마나 뒤처졌는지를 의미한다. while문 안에서 고정 시간 간격으로 루프를 돌며 실제 시간을 따라 잡을 때까지 업데이트를 진행한다.</p>
+
+<p>시간 간격인 <code class="language-plaintext highlighter-rouge">MS_PER_UPDATE</code> 은 시각적인 프레임 레이트가 아니다. 게임을 업데이트 간격에 대한 값으로 이 간격이 짧을 수록 실제 시간을 따라잡기가 더 오래걸린다.</p>
+
+<ul>
+  <li>60FPS 보다 더 빠르게  돌아가도록 시간 간격을 충분히 짧게 잡아 부드러운 게임 연출을 보여주는게 좋다.</li>
+  <li>시간 간격이 너무 짧아 가장 느린 하드웨어에서의 update() 실행에 걸리는 시간보다 짧아지면 안된다. 이 경우 게임이 멈춰버린다.</li>
+</ul>
+
+<p>유니티의 FixedUpdate()가 해당 방식을 사용한다.FixedUpdate는 고정 프레임 속도 프레임에 호출된다.</p>
+
+<p>아래는 유니티의 FixedUpdate와 Update의 시간 간격을 비교하는 간단한 예시 이다.</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><!-- <td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td> --><td class="rouge-code"><pre><span class="c1">// https://learn.unity.com/tutorial/update-mic-fixedupdate</span>
+<span class="k">using</span> <span class="nn">UnityEngine</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Collections</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">UpdateAndFixedUpdate</span> <span class="p">:</span> <span class="n">MonoBehaviour</span>
+<span class="p">{</span>
+    <span class="k">void</span> <span class="nf">FixedUpdate</span> <span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Debug</span><span class="p">.</span><span class="nf">Log</span><span class="p">(</span><span class="s">"FixedUpdate time :"</span> <span class="p">+</span> <span class="n">Time</span><span class="p">.</span><span class="n">deltaTime</span><span class="p">);</span>
+        <span class="c1">// 항상 시간 간격이 동일하게 나온다. 물리 처리에는 FixedUpdate를 사용해야한다.</span>
+    <span class="p">}</span>
+    
+    <span class="k">void</span> <span class="nf">Update</span> <span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Debug</span><span class="p">.</span><span class="nf">Log</span><span class="p">(</span><span class="s">"Update time :"</span> <span class="p">+</span> <span class="n">Time</span><span class="p">.</span><span class="n">deltaTime</span><span class="p">);</span>
+        <span class="c1">// 시간 간격이 유동적이다.</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="-other--reference">📌 Other &amp; Reference</h2>
+
+<p><a href="https://gameprogrammingpatterns.com/game-loop.html#take-a-little-nap">gameprogrammingpatterns-game-loop</a></p>
+
+<p><a href="https://docs.unity3d.com/kr/530/ScriptReference/MonoBehaviour.FixedUpdate.html">MonoBehaviour.FixedUpdate()</a></p>
+
+<p><strong>더 알아보기</strong></p>
+
+<p><a href="https://docs.unity3d.com/kr/2021.3/Manual/ExecutionOrder.html">이벤트 함수의 실행 순서</a></p>
+
+<p><a href="https://learn.unity.com/tutorial/update-mic-fixedupdate#6268e1cbedbc2a53df72a762">Update 및 FixedUpdate</a></p>
+
+:ET

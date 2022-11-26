@@ -1,0 +1,159 @@
+I"`+<h1 id="-프로토타입-prototype-언어의-패러다임"><strong>👀 프로토타입 (Prototype) 언어의 패러다임</strong></h1>
+
+<h2 id="-객체지향-프로그래밍">🧐 객체지향 프로그래밍</h2>
+<blockquote>
+  <p>OOP(객체 지향 프로그래밍,<em>Object-Oriented Programming</em>)은 데이터와 코드를 묶어주는 객체를 직접 정의 할 수 있다. (게임프로그래밍 패턴 93p)</p>
+</blockquote>
+
+<p>OOP의 가장 큰 특징은 상태와 동작을 함께 묶는 것이다.</p>
+
+<h2 id="️-셀프">🕵️ 셀프</h2>
+<p>셀프는 클래스가 존재하지 않는 객체지향 기반의 프로토타입 언어이다.</p>
+
+<p><img src="/assets/img/post/programmingPattern/self.png" alt="img-self" /></p>
+
+<h3 id="기존-클래스-기반-언어의-구별">기존 클래스 기반 언어의 구별</h3>
+<p>객체의 상태를 알기 위해서는 해당 인스턴스 내부를 확인해야한다. <strong>즉, 상태(필드)는 인스턴스에 들어있다.</strong></p>
+
+<p><strong>메서드를 호출할 때는 인스턴스의 클래스에서</strong> 찾는다. 즉, 동작은 클래스에 있다. 이런 점이 항상 한 단계를 거쳐서 메서드를 호출한다는 점에서 상태(필드)와 메서드가 다르다.</p>
+
+<h3 id="셀프의-구별">셀프의 구별</h3>
+<p>셀프는 이런 구별 자체가 없이 무엇이든 개게에서 바로 찾을 수 있다. 인스턴스가 상태와 동작을 모두 가질 수 있다.</p>
+
+<p><img src="/assets/img/post/programmingPattern/selfdelegation.png" alt="img-selfdelegation" /></p>
+
+<p>셀프는 크래스없이 코드를 재사용하고 중복코드를 줄이기 위해 <strong>객체의 위임 개념</strong>이 있다.</p>
+
+<p>위임을 받으면 어떤 필드나 메서드에 접근 및 호출할 때 먼저 해당 객체에 존재하는 지 찾아보고 없다면 상위 객체에서 찾아본다.
+이때 상위 객체는 그냥 다른 객체의 래퍼런스일 뿐이다.</p>
+
+<h3 id="객체-생성시-클래스-와-셀프를-다른-점">객체 생성시 클래스 와 셀프를 다른 점</h3>
+
+<ul>
+  <li><strong>클래스</strong>
+ 클래스는 자기 자신의 인스턴스 생성기이다.</li>
+  <li>
+    <p><strong>셀프</strong>
+ 셀프에서는 모든 객체가 프로토타입 패턴을 지원한다. 즉, 복제로 인스턴스를 생성하면된다.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>     1. 객체 하나를 원하는 상태로 만들어 필드와 메서드를 채워 넣는다.
+     2. 이 객체를 원하는 만큼 복사한다. 
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="-데이터-모델링-프로토타입">📑 <strong>데이터 모델링 프로토타입</strong></h2>
+
+<p>데이터 개체에 중복이 많다면 프로토타입 필드를 사용하는 것이  좋다.</p>
+
+<h3 id="json-데이터에서-프로토타입-활용">JSON 데이터에서 프로토타입 활용</h3>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+</pre></td><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"goblin grunt"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"minHealth"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"maxHealth"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"resists"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"cold"</span><span class="p">,</span><span class="w"> </span><span class="s2">"poison"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"weaknesses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"fire"</span><span class="p">,</span><span class="w"> </span><span class="s2">"light"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"goblin wizard"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"minHealth"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"maxHealth"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"resists"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"cold"</span><span class="p">,</span><span class="w"> </span><span class="s2">"poison"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"weaknesses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"fire"</span><span class="p">,</span><span class="w"> </span><span class="s2">"light"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"spells"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"fire ball"</span><span class="p">,</span><span class="w"> </span><span class="s2">"lightning bolt"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"goblin archer"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"minHealth"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"maxHealth"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"resists"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"cold"</span><span class="p">,</span><span class="w"> </span><span class="s2">"poison"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"weaknesses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"fire"</span><span class="p">,</span><span class="w"> </span><span class="s2">"light"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"attacks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"short bow"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>위와 같이 데이터를 사용하면 minHealth,maxHealth 등 중복되는 부분이 여럿 존재한다.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"goblin grunt"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"minHealth"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"maxHealth"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"resists"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"cold"</span><span class="p">,</span><span class="w"> </span><span class="s2">"poison"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"weaknesses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"fire"</span><span class="p">,</span><span class="w"> </span><span class="s2">"light"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"goblin wizard"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"prototype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"goblin grunt"</span><span class="p">,</span><span class="w"> 
+  </span><span class="nl">"spells"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"fire ball"</span><span class="p">,</span><span class="w"> </span><span class="s2">"lightning bolt"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"goblin archer"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"prototype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"goblin grunt"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"attacks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"short bow"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+<p>이와 같이 데이터 모델에 프로토타입 필드를 통해 위임을 추가하면 중복을 많이 제거할 수 있다는 장점이 있다.</p>
+
+<h3 id="추상-프로토타입의-불필요">추상 프로토타입의 불필요</h3>
+
+<p>위 예제에서 기본 고블린과 같은 추상 프로토타입을 따로 만들지 않고 기본적인 자료형을 하나 골라 다른 객체에 위임하도록 한 모습을 볼 수 있다.</p>
+
+<p>이점이 바로 <strong>프로토타입 기반 시스템에서 어떤 객체든 복제로 사용할 수 있음에 대한 예시</strong>이다.</p>
+
+<p>굳이 새로운 추상 프로토타입을 만들 필요가 없다.</p>
+
+<h2 id="-other--reference">📌 Other &amp; Reference</h2>
+
+<p><a href="https://github.com/munificent/game-programming-patterns/blob/master/book/prototype.markdown">game-programming-patterns github - prototype </a></p>
+:ET
