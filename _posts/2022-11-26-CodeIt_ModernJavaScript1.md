@@ -14,7 +14,7 @@ tags: [ECMAScript,Symbol,Bigint,Boolean]
 
 이때, ECMAScript 버전중 가장 많은 발전이 있었던 ES2015 이후의 자바스크립트를 ES6+ 라고 부른다.
 
-<details>  <summary>  JavaScript vs ECMAScript</summary>  <div markdown="1"> 
+### JavaScript vs ECMAScript
 
 JavaScript와 ECMAScript의 차이점
 > 1. ECMAScript는 **프로그래밍 언어의 표준**이고 JavaScript는 **프로그래밍 언어**이다. 즉,  ECMAScript는 JavaScript가 갖추어야 할 내용을 정리해둔 **'설명서'**이고, JavaScript는 ECMAScript를 준수해서 만들어낸 **'결과물'** 이다.  
