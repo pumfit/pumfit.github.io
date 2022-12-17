@@ -1,9 +1,10 @@
-﻿﻿---
-title: "[코드잇] 모던 자바스크립트 01"
-date: 2022-11-26 20:00:06+0900
+﻿---
+title: '모던 자바스크립트 01'
+date: 2022-11-26 21:00:06+0900
 categories: [JavaScript,ModernJavaScript]
-tags: [ECMAScript,Symbol,Bigint,Boolean]
+tags: [designPattern,byteCode]
 ---
+
 해당 포스트는 코드잇 모던 자바스크립트 강의 내용을 정리한 내용입니다.
 
 # **👀 모던 자바스크립트란?**
