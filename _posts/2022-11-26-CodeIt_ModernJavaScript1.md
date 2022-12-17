@@ -21,7 +21,7 @@ JavaScript와 ECMAScript의 차이점
 > 2. **JavaScript는** ECMAScript를 기반으로 하지만 ECMAScript에 정의된 내용뿐만 아니라, **다른 부가적인 기능도 포함되어 있다.**
 
 🔗 https://www.codeit.kr/learn/4477
-</div>  </details>
+
 
 ## 모던 자바스크립트
 
